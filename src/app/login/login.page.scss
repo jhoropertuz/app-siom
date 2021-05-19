@@ -1,0 +1,13 @@
+.centrado-padre {
+    display: grid;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    justify-items: center;
+  
+  }
+
+  .centrado-hijo {
+    width: 50%;
+    margin: 1%;
+}
