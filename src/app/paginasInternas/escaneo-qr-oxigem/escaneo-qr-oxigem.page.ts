@@ -1,7 +1,11 @@
 
 import { Component, ViewChild, ElementRef,OnInit,OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { ToastController, LoadingController, Platform } from '@ionic/angular';
 import jsQR from 'jsqr';
+import { BaseService } from 'src/app/service/base.service';
+import { DatosEquiposService } from 'src/app/service/datos-equipos.service';
+import { SweetalertService } from 'src/app/service/sweetalert.service';
 
 @Component({
   selector: 'app-escaneo-qr-oxigem',
@@ -11,10 +15,20 @@ import jsQR from 'jsqr';
 export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
   buscar=false;
   buscarAnimacion=false;
+  equipoEscaneado;
+  equipos=[];
+  verEquipo=false;
+  verEscaner=true;
+  verListaEscaneo=false;
+
   constructor(
     private toastCtrl: ToastController,
     private loadingCtrl: LoadingController,
-    private plt: Platform
+    private plt: Platform,
+    private BaseService:BaseService,
+    public SweetalertService:SweetalertService,
+    public Router:Router,
+    public DatosEquiposService:DatosEquiposService
   ) {
     const isInStandaloneMode = () =>
       'standalone' in window.navigator && window.navigator['standalone'];
@@ -44,9 +58,77 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
     this.videoElement = this.video.nativeElement;
     this.startScan();
   }
+
+
+  buscarEquipo(serial){
+    this.BaseService.postJson("productos","equipos","buscarPorSerialEnServicioAPI",{equipoSerial:serial}).subscribe(res=>{
+      console.log(res);
+      if(res.RESPUESTA="EXITO"){
+        this.equipoEscaneado=res.DATOS[0];
+        this.stopScan();
+        this.verEscaner=false;
+        this.verListaEscaneo=false;
+        this.verEquipo=true;
+      }else{
+        this.SweetalertService.modal("ERROR",res.MENSAJE)
+      }
+    });
+  }
+
+  AceptarEscaneo(){
+    this.equipos.push(this.equipoEscaneado);
+    this.verEscaner=true;
+    this.verEquipo=false;
+    this.verListaEscaneo=false;
+    this.startScan();
+  }
+
+  cancelarEscaneo(){
+    this.inicirEscaneo();
+  }
+
+  mostarListaEscaneo(){
+    this.verEquipo=false;
+    this.verListaEscaneo=true;
+    this.verEscaner=false;
+    this.stopScan();
+  }
+
+  inicirEscaneo(){
+    this.verEquipo=false;
+    this.verListaEscaneo=false;
+    this.verEscaner=true;
+    this.startScan();
+  }
+
+  accionBoton(){
+    if(!this.verEscaner){
+      this.inicirEscaneo();
+    }else{
+      if(this.equipos.length>0){
+        this.mostarListaEscaneo();
+      }else{
+        this.SweetalertService.notificacion("info","No se encontraron elementos escaneados.")
+      }
+    }
+  }
+
+  sacarDeLista(index){
+    console.log("eliminar:"+index);
+    this.equipos.splice(index,1);
+    if(this.equipos.length==0){
+      this.accionBoton();
+    }
+  }
+
+  finalizarEscaneo(ruta){
+    this.Router.navigateByUrl(ruta);
+    this.DatosEquiposService.setEquipos(this.equipos);
+  }
  
   // Helper functions
   async showQrToast() {
+    this.buscarEquipo(this.scanResult);
     const toast = await this.toastCtrl.create({
       message: `Open ${this.scanResult}?`,
       //position: 'top',
@@ -69,7 +151,6 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
     }
     
   }
- 
 
   reset() {
     this.scanResult = null;
@@ -138,7 +219,8 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
       if (code) {
         this.scanActive = false;
         this.scanResult = code.data;
-        this.showQrToast();
+        /* this.showQrToast(); */
+        this.buscarEquipo(this.scanResult);
       } else {
         if (this.scanActive) {
           requestAnimationFrame(this.scan.bind(this));

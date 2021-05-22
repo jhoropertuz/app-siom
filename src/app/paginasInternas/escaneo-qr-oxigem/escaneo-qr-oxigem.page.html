@@ -1,86 +1,77 @@
-
-
-
-
 <ion-header class="ion-no-border"  >
   <ion-toolbar>
     <ion-buttons >
-      <ion-back-button slot="start" icon="chevron-back" defaultHref="menu-principal"></ion-back-button>
-      
+      <ion-back-button slot="start" icon="home-outline" defaultHref="menu-principal"></ion-back-button>
     </ion-buttons>
-    
     <ion-buttons slot="end" >
-      <ion-button size="small" (click)="cambiarEstado()" >
-        <ion-icon name="qr-code-outline" *ngIf="!leerQR" ></ion-icon>
-        <ion-icon name="list-outline"*ngIf="leerQR"></ion-icon>
+      <ion-button size="small" (click)="accionBoton()">
+        <ion-icon name="qr-code-outline" *ngIf="!verEscaner"></ion-icon>
+        <ion-icon name="list-outline"  *ngIf="verEscaner" ></ion-icon>
       </ion-button>
-      <ion-button  (click)="buscador()" size="small">
+      <!-- <ion-button  (click)="buscador()" size="small">
         <ion-icon *ngIf="buscar" name="search-circle"></ion-icon>
         <ion-icon *ngIf="!buscar" name="search"></ion-icon>
-      </ion-button>
+      </ion-button> -->
     </ion-buttons>
-    
-    
   </ion-toolbar>
 </ion-header>
 
 
 <ion-content [fullscreen]="true">
   <ion-searchbar color="primary"  style="position: absolute; z-index: 100;" *ngIf="buscar" [ngClass]="{'animate__backInRight': buscarAnimacion, 'animate__backOutRight': !buscarAnimacion }" class="animate__animated  " ></ion-searchbar>
-  <div id="container" style="position: relative;"  [hidden]="!leerQR">
-    <!-- Shows our camera stream -->
-    <div [hidden]="!scanActive" style=" transform: translateY(-50%);top:50% ;z-index: 1;position: absolute;width: 100% ; padding-right: 13%; padding-left: 13%;">
-      <img src="../../assets/img/marco-qr_3.png" alt="" width="90%"  >
-    </div>
+  <div id="container" style="position: relative;"  [hidden]="!verEscaner">
+      <!-- Shows our camera stream -->
+      <div [hidden]="!scanActive" style=" transform: translateY(-50%);top:50% ;z-index: 1;position: absolute;width: 100% ; padding-right: 13%; padding-left: 13%;">
+        <img src="../../assets/img/marco-qr_3.png" alt="" width="90%"  >
+      </div>
+      
+    <video #video [hidden]="!scanActive" id="video" width="90%" style="position: absolute; top: 0;left: 0;right: 0;bottom: 0;margin: auto;" >
+    </video>
     
-  <video #video [hidden]="!scanActive" id="video" width="90%" style="position: absolute; top: 0;left: 0;right: 0;bottom: 0;margin: auto;" >
-  </video>
-  
-  <!-- Used to render the camera stream images -->
-  <canvas #canvas hidden id="canvas"></canvas>
+    <!-- Used to render the camera stream images -->
+    <canvas #canvas hidden id="canvas"></canvas>
   </div>
-  <div class="ion-padding" *ngIf="!leerQR">
-    <ion-item lines="none" (click)="irRuta('detalles-usuario')" >
-      <ion-icon name="calendar-outline" slot="start" style="background: #57ed95" ></ion-icon>
+ 
+  <div *ngIf="verEquipo" >
+    <div class="ion-padding">
+      <ion-item lines="none">
+        <ion-label class="text-center">
+          <h2><strong>{{equipoEscaneado.equipoTitulo}}</strong></h2><br>
+          <strong>Serie:</strong>{{equipoEscaneado.equipoSerial}}<br>
+          <strong>Codigo:</strong>{{equipoEscaneado.equipoCodigo}}<br>
+          <strong>Estado:</strong>{{equipoEscaneado.equipoEstadoCodigo}}<br>
+          <strong>Cliente:</strong>{{equipoEscaneado.equipoEstadoCodigo}}<br><br><br>
+          <ion-button color="danger" slot="start" (click)="cancelarEscaneo()">Cancelar</ion-button>
+          <ion-button color="success" slot="end" (click)="AceptarEscaneo()">Aceptar</ion-button>
+        </ion-label>
+      </ion-item>
+    </div>
+  </div>
+
+  <div class="ion-padding" *ngIf="verListaEscaneo">
+    <ion-item lines="none" *ngFor="let equipo of equipos;let i = index" >
+      <ion-icon name="checkmark-outline" slot="start" style="background: #57ed95" ></ion-icon>
       <ion-label>
-        <ion-label  >
-          <strong>Oximed-2899</strong>  <br>
-          Retener : $40.000 <br>
-          <h6> 23-07-2020</h6><br>
+        <ion-label>
+          <strong>{{equipo.equipoTitulo}}</strong>  <br>
+            Codigo: {{equipo.equipoCodigo}}<br>
+          <!-- <h6> 23-07-2020</h6><br> -->
         </ion-label>
       </ion-label>
+      <ion-button (click)="sacarDeLista(i)" size="small" fill="clear" ><ion-icon style="background: white"  name="close-outline" color="danger"></ion-icon></ion-button>
     </ion-item>
-    <ion-item lines="none"  (click)="irRuta('detalles-usuario')">
-      <ion-icon name="calendar-outline"  slot="start" style="background: #ed576b" ></ion-icon>
-      <ion-label >
-        <strong>Oximed-2899</strong>  <br>
-        Deposito: $50.000<br>
-        <h6> 23-07-2020</h6> <br>
-      </ion-label>
-    </ion-item>
-    <ion-item lines="none"  (click)="irRuta('detalles-usuario')">
-      <ion-icon name="calendar-outline"  slot="start" style="background: #ed576b" ></ion-icon>
-      <ion-label >
-        <strong>Oximed-2499</strong>  <br>
-        Deposito: $20.000<br>
-        <h6> 23-07-2020</h6> <br>
-      </ion-label>
-    </ion-item>
-
-    <!-- <h6>Pickup Location</h6>
     <ion-item lines="none">
-      <ion-icon name="location-outline" slot="start"></ion-icon>
-      <ion-label>
-        <ion-input placeholder="Muscat"></ion-input>
+      <ion-label class="text-center">
+        <ion-button color="success" style="width: 100%;" size="large" slot="start" (click)="finalizarEscaneo('entrega-oxigem')">Entregar</ion-button><br>
+        <ion-button color="primary" style="width: 100%;" size="large" slot="end" (click)="finalizarEscaneo('recoger-oxigem')">Recoger</ion-button>
       </ion-label>
-      <ion-icon name="chevron-forward" slot="end"></ion-icon>
-    </ion-item> -->
+    </ion-item>
 
   </div>
 </ion-content>
 
 <!-- <div class="ion-padding">
   <ion-badge color="danger" mode="ios">
-    Oxigem-2020
+    <ion-button>aceptar</ion-button>
   </ion-badge>
-</div> -->
+</div> --> 

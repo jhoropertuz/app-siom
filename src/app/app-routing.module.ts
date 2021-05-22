@@ -13,12 +13,12 @@ const routes: Routes = [
     loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
   },
   {
-    path: 'entrega-oxigem/:id',
+    path: 'entrega-oxigem',
     canActivate: [AuthGuard],
     loadChildren: () => import('./paginasInternas/entrega-oxigem/entrega-oxigem.module').then( m => m.EntregaOxigemPageModule)
   },
   {
-    path: 'recoger-oxigem/:id',
+    path: 'recoger-oxigem',
     canActivate: [AuthGuard],
     loadChildren: () => import('./paginasInternas/recoger-oxigem/recoger-oxigem.module').then( m => m.RecogerOxigemPageModule)
   },

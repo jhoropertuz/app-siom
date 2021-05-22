@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { EntregaOxigemPageRoutingModule } from './entrega-oxigem-routing.module';
 
 import { EntregaOxigemPage } from './entrega-oxigem.page';
+import { SharedModule } from 'src/app/shareds/shared.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    EntregaOxigemPageRoutingModule
+    EntregaOxigemPageRoutingModule,
+    SharedModule
   ],
   declarations: [EntregaOxigemPage]
 })

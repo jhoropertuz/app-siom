@@ -42,10 +42,10 @@ export class BaseService {
     return this.http.patch<any>(Endpoind.API_BASE+url,Data);
   }
 
-  sesion(controlador="sesion",operacion="ApiPorIdentificacion",Data:any={},loading=true):Observable<any>{
+  /* sesion(controlador="sesion",operacion="ApiPorIdentificacion",Data:any={},loading=true):Observable<any>{
     Data.controlador=controlador;
     Data.accion=operacion;
-    /* this.headers.append('Authorization', 'Basic' + base64.encode("joanathan" + ':' + "12345") ); */
+    this.headers.append('Authorization', 'Basic' + base64.encode("joanathan" + ':' + "12345") );
     return this.http.post<any>(Endpoind.API_BASE,Data,{ headers:this.headers});
-  }
+  } */
 }
