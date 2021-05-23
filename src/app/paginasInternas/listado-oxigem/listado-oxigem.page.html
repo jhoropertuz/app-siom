@@ -1,12 +1,12 @@
 
 <ion-header class="ion-no-border"  >
   <ion-toolbar>
-    <ion-buttons slot="start">
+    <!-- <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
-    </ion-buttons>
+    </ion-buttons> -->
     <ion-title>{{titulo}}</ion-title>
     <ion-buttons slot="start">
-      <!-- <ion-back-button icon="chevron-back" defaultHref="menu-principal"></ion-back-button> -->
+      <ion-back-button icon="chevron-back" defaultHref="menu-principal"></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="end" >
       <ion-button size="small" (click)="irRuta('escaneo-qr-oxigem')" >
@@ -43,7 +43,7 @@
             </ion-buttons>
           </ion-col>
           <ion-col class="text-right" size="3" >
-            <ion-button fill="clear" size="large" (click)="irRuta('recoger-oxigem/'+item.reciboId)" ><ion-icon name="chevron-forward" slot="end" class="ion-icon-a"></ion-icon></ion-button>
+            <ion-button fill="clear" size="large" (click)="irAccion(item)" ><ion-icon name="chevron-forward" slot="end" class="ion-icon-a"></ion-icon></ion-button>
           </ion-col>
         </ion-row>
       </ion-grid>

@@ -17,6 +17,9 @@ import { SharedModule } from 'src/app/shareds/shared.module';
     RecogerOxigemPageRoutingModule,
     SharedModule
   ],
-  declarations: [RecogerOxigemPage]
+  declarations: [RecogerOxigemPage],
+  providers:[
+    
+  ]
 })
 export class RecogerOxigemPageModule {}

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MenuController } from '@ionic/angular';
+import { DatosEquiposService } from 'src/app/service/datos-equipos.service';
 import { BaseService } from '../../service/base.service';
 import { SweetalertService } from '../../service/sweetalert.service';
 @Component({
@@ -16,7 +17,7 @@ export class ListadoOxigemPage implements OnInit {
   listado=[];
   listadoFilter=[];
   listadoTodos=[];
-  constructor(public Router:Router,private ActivatedRoute: ActivatedRoute, public BaseService:BaseService,public Sweetalert:SweetalertService,private MenuController:MenuController) { }
+  constructor(public DatosEquiposService:DatosEquiposService ,public Router:Router,private ActivatedRoute: ActivatedRoute, public BaseService:BaseService,public Sweetalert:SweetalertService,private MenuController:MenuController) { }
 
   ngOnInit() {
     this.MenuController.enable(true, 'menu');
@@ -33,9 +34,11 @@ export class ListadoOxigemPage implements OnInit {
     this.Router.navigateByUrl(ruta);
   }
 
-  irAccion(id){
+
+  irAccion(data){
     if (this.listadoTipo=='recoger') {
-      this.Router.navigateByUrl('recoger-oxigem/'+id); 
+      this.DatosEquiposService.setEquipos([data]);
+      this.Router.navigateByUrl('recoger-oxigem'); 
     }
   }
 

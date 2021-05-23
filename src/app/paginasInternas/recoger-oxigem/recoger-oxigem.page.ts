@@ -4,7 +4,6 @@ import { BaseService } from 'src/app/service/base.service';
 import { DatosEquiposService } from 'src/app/service/datos-equipos.service';
 import { SweetalertService } from 'src/app/service/sweetalert.service';
 import { FirmaComponent } from 'src/app/shareds/firma/firma.component';
-
 @Component({
   selector: 'app-recoger-oxigem',
   templateUrl: './recoger-oxigem.page.html',
@@ -25,11 +24,16 @@ export class RecogerOxigemPage implements OnInit {
         this.Sweetalert.notificacion("info","Datos Insuficientes.")
         this.Router.navigateByUrl("menu-principal");
     }
+   
   }
 
   ngOnInit() {
 
+    
+
   }
+
+  
 
   recogido(){
     alert("recogido");

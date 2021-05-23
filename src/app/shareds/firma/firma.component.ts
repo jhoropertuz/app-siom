@@ -10,7 +10,7 @@ export class FirmaComponent implements OnInit {
   classBorderCanvas="rojo";
   @ViewChild(SignaturePad) signaturePad: SignaturePad;
   @Output() firmaBase64Event = new EventEmitter<string>();
-  private signaturePadOptions: Object = { // passed through to szimek/signature_pad constructor
+  public signaturePadOptions: Object = { // passed through to szimek/signature_pad constructor
     'mixWidth':1,
     'minWidth': 1,
     'canvasHeight': 300

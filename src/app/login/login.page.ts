@@ -51,7 +51,7 @@ constructor(public formBuilder: FormBuilder, private router: Router, public Base
       if(res.RESPUESTA=='EXITO'){
         this.AuthService.DatosUsuario(res.DATOS);
         this.Sweetalert.notificacion('success',res.MENSAJE);
-        this.router.navigateByUrl("listado-oxigem/recoger");
+        this.router.navigateByUrl("menu-principal");
       }else{
         let tipoModal=(res.RESPUESTA=='INFO')?'info':'error';
         this.Sweetalert.modal(tipoModal,res.MENSAJE);
