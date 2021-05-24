@@ -64,13 +64,18 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
     this.BaseService.postJson("productos","equipos","buscarPorSerialEnServicioAPI",{equipoSerial:serial}).subscribe(res=>{
       console.log(res);
       if(res.RESPUESTA="EXITO"){
-        this.equipoEscaneado=res.DATOS[0];
-        this.stopScan();
-        this.verEscaner=false;
-        this.verListaEscaneo=false;
-        this.verEquipo=true;
+        if(res.DATOS!= null && res.DATOS.length>0){
+          this.equipoEscaneado=res.DATOS[0];
+          this.stopScan();
+          this.verEscaner=false;
+          this.verListaEscaneo=false;
+          this.verEquipo=true;
+        }else{
+          this.SweetalertService.notificacion("info","No se encontro el elemento.");
+          this.startScan();
+        }
       }else{
-        this.SweetalertService.modal("ERROR",res.MENSAJE)
+        this.SweetalertService.modal("error",res.MENSAJE);
       }
     });
   }
@@ -111,6 +116,10 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
         this.SweetalertService.notificacion("info","No se encontraron elementos escaneados.")
       }
     }
+  }
+
+  reiniciarEscaneoElementos(){
+    this.equipos=[];
   }
 
   sacarDeLista(index){

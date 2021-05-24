@@ -1,12 +1,14 @@
 <ion-header class="ion-no-border"  >
   <ion-toolbar>
-    <ion-buttons >
-      <ion-back-button slot="start" icon="home-outline" defaultHref="menu-principal"></ion-back-button>
+    
+    <ion-buttons slot="start" >
+      <ion-back-button  icon="chevron-back" defaultHref="menu-principal"></ion-back-button>
     </ion-buttons>
+    <ion-title>Escanear QR</ion-title>
     <ion-buttons slot="end" >
       <ion-button size="small" (click)="accionBoton()">
         <ion-icon name="qr-code-outline" *ngIf="!verEscaner"></ion-icon>
-        <ion-icon name="list-outline"  *ngIf="verEscaner" ></ion-icon>
+        <!-- <ion-icon name="list-outline"  *ngIf="verEscaner" ></ion-icon> -->
       </ion-button>
       <!-- <ion-button  (click)="buscador()" size="small">
         <ion-icon *ngIf="buscar" name="search-circle"></ion-icon>
@@ -30,6 +32,16 @@
     
     <!-- Used to render the camera stream images -->
     <canvas #canvas hidden id="canvas"></canvas>
+    
+
+  </div>
+  <div [hidden]="!verEscaner">
+    <ion-item lines="none" *ngIf="verEscaner && equipos.length>0">
+      <ion-label class="text-center">
+        <ion-button  (click)="accionBoton()" color="success" size="small" >Finalizar</ion-button>
+        <ion-button  (click)="reiniciarEscaneoElementos()" color="primary" size="small" >Reiniciar</ion-button>
+      </ion-label>
+    </ion-item>
   </div>
  
   <div *ngIf="verEquipo" >
@@ -49,6 +61,14 @@
   </div>
 
   <div class="ion-padding" *ngIf="verListaEscaneo">
+    <p>cliente</p>
+    <ion-item lines="none">
+      <ion-label class="text-center">
+        <p>cc:</p>
+        <p>nombre:</p>
+      </ion-label>
+    </ion-item>
+    <p>Equipos</p>
     <ion-item lines="none" *ngFor="let equipo of equipos;let i = index" >
       <ion-icon name="checkmark-outline" slot="start" style="background: #57ed95" ></ion-icon>
       <ion-label>
