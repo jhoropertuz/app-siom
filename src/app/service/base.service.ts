@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Endpoind } from '../endpoind';
 import { LoadingController } from '@ionic/angular';
+import { AuthService } from './auth.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -16,7 +17,7 @@ export class BaseService {
   });
 
    
-  constructor(private http: HttpClient,public loadingController: LoadingController) { }
+  constructor(private AuthService:AuthService,private http: HttpClient,public loadingController: LoadingController) { }
   
   async presentLoading( mensaje="Cargando...",clase='my-custom-class') {
     let loading = await this.loadingController.create({
@@ -35,6 +36,7 @@ export class BaseService {
     Data.componente=componente;
     Data.controlador=controlador;
     Data.accion=operacion;
+    Data.authUsuarioID=this.AuthService.getUsuario().usuarioId;
     return this.http.post<any>(Endpoind.API_BASE,Data);
   }
 

@@ -6,6 +6,7 @@ import { DatosEquiposService } from 'src/app/service/datos-equipos.service';
 import { SweetalertService } from 'src/app/service/sweetalert.service';
 import { FirmaComponent } from 'src/app/shareds/firma/firma.component';
 import { Plugins } from "@capacitor/core";
+import { AuthService } from 'src/app/service/auth.service';
 @Component({
   selector: 'app-recoger-oxigem',
   templateUrl: './recoger-oxigem.page.html',
@@ -24,7 +25,7 @@ export class RecogerOxigemPage implements OnInit {
   formularioCompleto=false;
   personaId="";
 
-  constructor(public formBuilder: FormBuilder,public DatosEquiposService: DatosEquiposService,public Router:Router,private BaseService:BaseService, public Sweetalert:SweetalertService,private ActivatedRoute: ActivatedRoute) { 
+  constructor(private AuthService:AuthService ,public formBuilder: FormBuilder,public DatosEquiposService: DatosEquiposService,public Router:Router,private BaseService:BaseService, public Sweetalert:SweetalertService,private ActivatedRoute: ActivatedRoute) { 
     this.equipos=this.DatosEquiposService.getEquipos();
     if(this.equipos.length){
       console.log(this.equipos);
@@ -126,6 +127,7 @@ export class RecogerOxigemPage implements OnInit {
     let equiposID=this.equipos.map(res=>{
       return res.equipoId; 
     });
+    
     console.log({firmaBase64:this.firmaBase64,coordenadas:this.coordenadas,equipos:equiposID,persona:persona});
     
     /* alert("recogido");
