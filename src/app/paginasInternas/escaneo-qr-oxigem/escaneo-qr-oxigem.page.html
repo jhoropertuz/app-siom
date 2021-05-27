@@ -6,8 +6,8 @@
     </ion-buttons>
     <ion-title>Escanear QR</ion-title>
     <ion-buttons slot="end" >
-      <ion-button size="small" (click)="accionBoton()">
-        <ion-icon name="qr-code-outline" *ngIf="!verEscaner"></ion-icon>
+      <ion-button size="small"  *ngIf="!verEscaner" (click)="accionBoton()">
+        <ion-icon name="qr-code-outline"></ion-icon>
         <!-- <ion-icon name="list-outline"  *ngIf="verEscaner" ></ion-icon> -->
       </ion-button>
       <!-- <ion-button  (click)="buscador()" size="small">
@@ -26,6 +26,10 @@
       <div [hidden]="!scanActive" style=" transform: translateY(-50%);top:50% ;z-index: 1;position: absolute;width: 100% ; padding-right: 13%; padding-left: 13%;">
         <img src="../../assets/img/marco-qr_3.png" alt="" width="90%"  >
       </div>
+
+      <div *ngIf="esperando" style=" transform: translateY(-50%);top:50% ;z-index: 1;position: absolute;width: 100% ; padding-right: 13%; padding-left: 13%;">
+        <p>Espere Por Favor ...</p>
+      </div>
       
     <video #video [hidden]="!scanActive" id="video" width="90%" style="position: absolute; top: 0;left: 0;right: 0;bottom: 0;margin: auto;" >
     </video>
@@ -36,8 +40,15 @@
 
   </div>
   <div [hidden]="!verEscaner">
+   <ion-item lines="none" *ngIf="equipos.length <= 0">
+      <ion-label class="text-center" >
+        <p>Si el escaner no funciona de click aquí</p>
+        <ion-button  (click)="irAlistaEquipos()" fill="clear" color="danger" size="small" >Lista equipos</ion-button>
+      </ion-label>
+    </ion-item> 
     <ion-item lines="none" *ngIf="verEscaner && equipos.length>0">
       <ion-label class="text-center">
+        <p>Equipos Escaniados {{equipos.length}}</p>
         <ion-button  (click)="accionBoton()" color="success" size="small" >Finalizar</ion-button>
         <ion-button  (click)="reiniciarEscaneoElementos()" color="primary" size="small" >Reiniciar</ion-button>
       </ion-label>
@@ -47,43 +58,79 @@
   <div *ngIf="verEquipo" >
     <div class="ion-padding">
       <ion-item lines="none">
-        <ion-label class="text-center">
-          <h2><strong>{{equipoEscaneado.equipoTitulo}}</strong></h2><br>
-          <strong>Serie:</strong>{{equipoEscaneado.equipoSerial}}<br>
-          <strong>Codigo:</strong>{{equipoEscaneado.equipoCodigo}}<br>
-          <strong>Estado:</strong>{{equipoEscaneado.equipoEstadoCodigo}}<br>
-          <strong>Cliente:</strong>{{equipoEscaneado.equipoEstadoCodigo}}<br><br><br>
-          <ion-button color="danger" slot="start" (click)="cancelarEscaneo()">Cancelar</ion-button>
-          <ion-button color="success" slot="end" (click)="AceptarEscaneo()">Aceptar</ion-button>
-        </ion-label>
+        <ion-grid>
+          <ion-row style="margin-bottom: 5%;" >
+            <ion-col >
+              <ion-label >
+                <ion-button  color="danger" slot="start" (click)="cancelarEscaneo()">Cancelar</ion-button>
+              </ion-label>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-label class="ion-text-wrap text-center">   
+                <ion-text color="primary"><h2>Equipo</h2></ion-text>
+                <strong>equipo:</strong> {{equipoEscaneado.equipoTitulo}}<br>
+                <strong>Serie:</strong> {{equipoEscaneado.equipoSerial}}<br>
+                <strong>Codigo Equipo:</strong> {{equipoEscaneado.equipoCodigo}}<br><br>
+                <ion-text color="primary"><h2>Cliente</h2></ion-text>
+                <strong>Nombre:</strong> {{equipoEscaneado.personaRazonSocial}}<br>
+                <strong>CC:</strong> {{equipoEscaneado.personaIdentificacion}}<br>
+                <strong>Codigo Cliente:</strong> {{equipoEscaneado.clienteCodigo}}<br>
+                <strong>Correo:</strong> {{equipoEscaneado.personaCorreoElectronico}}<br><br>
+                <ion-text color="primary"><h2>Recibo</h2></ion-text>
+                <strong>Numero:</strong> {{equipoEscaneado.reciboNumero}}<br>
+                <strong>Servicio:</strong> {{equipoEscaneado.reciboServicio}}<br>
+                <strong>Fecha Servicio:</strong> {{equipoEscaneado.reciboFechaServicio}}<br>
+                <strong>Fecha recogida:</strong> {{equipoEscaneado.reciboFechaRecogida}}<br>
+                <br><br>
+                <ion-button color="success" size="small" slot="end" (click)="AceptarEscaneo('buen_estado')">Buen estado</ion-button>
+                <ion-button color="warning" size="small" slot="end" (click)="AceptarEscaneo('perdido')">Perdido</ion-button>
+                <ion-button color="primary" size="small" slot="end" (click)="AceptarEscaneo('devuelto')">Devuelto</ion-button>
+              </ion-label>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        
       </ion-item>
     </div>
   </div>
 
   <div class="ion-padding" *ngIf="verListaEscaneo">
-    <p>cliente</p>
+    <!-- <p>cliente</p>
     <ion-item lines="none">
       <ion-label class="text-center">
-        <p>cc:</p>
-        <p>nombre:</p>
+        <p>Codigo Cliente: {{cliente.clienteCodigo}}</p>
+        <p>CC: {{cliente.personaIdentificacion}} </p>
+        <p>nombre: {{cliente.personaRazonSocial}}</p>
+        <p>correo: {{cliente.personaCorreoElectronico}}</p>
       </ion-label>
-    </ion-item>
-    <p>Equipos</p>
-    <ion-item lines="none" *ngFor="let equipo of equipos;let i = index" >
-      <ion-icon name="checkmark-outline" slot="start" style="background: #57ed95" ></ion-icon>
-      <ion-label>
-        <ion-label>
+    </ion-item> -->
+   <!--  <p>Equipos</p> -->
+    <ion-item lines="none" *ngFor="let equipo of equipos;let i = index"  >
+      <!-- <ion-icon name="checkmark-outline" slot="start" style="background: #57ed95" ></ion-icon> -->
+        <ion-label (click)="active = !active" >
           <strong>{{equipo.equipoTitulo}}</strong>  <br>
-            Codigo: {{equipo.equipoCodigo}}<br>
+          <strong> Codigo Cliente:</strong> {{equipo.clienteCodigo}}<br>
+          <strong> CC: </strong> {{equipo.personaIdentificacion}}<br>
+          <strong>nombre:</strong> {{equipo.personaRazonSocial}}<br>
+          <ion-label [hidden]="active"   >
+            <strong>Correo:</strong> {{equipoEscaneado.personaCorreoElectronico}}<br>
+            <strong>Numero:</strong> {{equipoEscaneado.reciboNumero}}<br>
+            <strong>Servicio:</strong> {{equipoEscaneado.reciboServicio}}<br>
+            <strong>Fecha Servicio:</strong> {{equipoEscaneado.reciboFechaServicio}}<br>
+            <strong>Fecha recogida:</strong> {{equipoEscaneado.reciboFechaRecogida}}<br>
+          </ion-label>
           <!-- <h6> 23-07-2020</h6><br> -->
-        </ion-label>
       </ion-label>
       <ion-button (click)="sacarDeLista(i)" size="small" fill="clear" ><ion-icon style="background: white"  name="close-outline" color="danger"></ion-icon></ion-button>
     </ion-item>
     <ion-item lines="none">
       <ion-label class="text-center">
-        <ion-button color="success" style="width: 100%;" size="large" slot="start" (click)="finalizarEscaneo('entrega-oxigem')">Entregar</ion-button><br>
-        <ion-button color="primary" style="width: 100%;" size="large" slot="end" (click)="finalizarEscaneo('recoger-oxigem')">Recoger</ion-button>
+        <ion-button color="success" *ngIf="accion!='recoger' && accion!='entregar'" style="width: 100%;" size="large" slot="start" (click)="finalizarEscaneo('entrega-oxigem')">Entregar</ion-button><br>
+        <ion-button color="primary" *ngIf="accion!='recoger' && accion!='entregar'" style="width: 100%;" size="large" slot="end" (click)="finalizarEscaneo('recoger-oxigem')">Recoger</ion-button>
+        <ion-button color="success" *ngIf="accion=='entregar'" style="width: 100%;" size="large" slot="start" (click)="finalizarEscaneo('entrega-oxigem')">Continuar Entregar</ion-button><br>
+        <ion-button color="primary" *ngIf="accion=='recoger'" style="width: 100%;" size="large" slot="end" (click)="finalizarEscaneo('recoger-oxigem')">Continuar Recogida</ion-button>
       </ion-label>
     </ion-item>
 

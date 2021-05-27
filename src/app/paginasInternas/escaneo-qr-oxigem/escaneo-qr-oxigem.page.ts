@@ -1,6 +1,6 @@
 
 import { Component, ViewChild, ElementRef,OnInit,OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastController, LoadingController, Platform } from '@ionic/angular';
 import jsQR from 'jsqr';
 import { BaseService } from 'src/app/service/base.service';
@@ -13,6 +13,7 @@ import { SweetalertService } from 'src/app/service/sweetalert.service';
   styleUrls: ['./escaneo-qr-oxigem.page.scss'],
 })
 export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
+  esperando=true;
   buscar=false;
   buscarAnimacion=false;
   equipoEscaneado;
@@ -20,6 +21,16 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
   verEquipo=false;
   verEscaner=true;
   verListaEscaneo=false;
+  visorDatosEquipo=null;
+  accion="";
+  active=true;
+  active1=true;
+  cliente={
+    clienteCodigo:"",
+    personaIdentificacion:"",
+    personaRazonSocial:"",
+    personaCorreoElectronico:""
+  };
 
   constructor(
     private toastCtrl: ToastController,
@@ -28,7 +39,8 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
     private BaseService:BaseService,
     public SweetalertService:SweetalertService,
     public Router:Router,
-    public DatosEquiposService:DatosEquiposService
+    public DatosEquiposService:DatosEquiposService,
+    public ActivatedRoute:ActivatedRoute
   ) {
     const isInStandaloneMode = () =>
       'standalone' in window.navigator && window.navigator['standalone'];
@@ -38,7 +50,9 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
     }
   }
   ngOnInit() {
-    
+    //la accion puede ser recoger o entregar o ninguna
+    this.accion=this.ActivatedRoute.snapshot.params.tipo;
+   
   }@ViewChild('video', { static: false }) video: ElementRef;
   @ViewChild('canvas', { static: false }) canvas: ElementRef;
   @ViewChild('fileinput', { static: false }) fileinput: ElementRef;
@@ -56,7 +70,8 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
     this.canvasElement = this.canvas.nativeElement;
     this.canvasContext = this.canvasElement.getContext('2d');
     this.videoElement = this.video.nativeElement;
-    this.startScan();
+    /* this.startScan(); */ 
+    this.buscarEquipo("AS1018115");
   }
 
 
@@ -80,7 +95,8 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
     });
   }
 
-  AceptarEscaneo(){
+  AceptarEscaneo(estado){
+    this.equipoEscaneado.estadoEntregaEquipo=estado;
     this.equipos.push(this.equipoEscaneado);
     this.verEscaner=true;
     this.verEquipo=false;
@@ -134,6 +150,10 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
     this.Router.navigateByUrl(ruta);
     this.DatosEquiposService.setEquipos(this.equipos);
   }
+
+  irAlistaEquipos(){
+    this.Router.navigateByUrl("listado-oxigem/"+this.accion);
+  }
  
   // Helper functions
   async showQrToast() {
@@ -181,6 +201,7 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
 
 
   async startScan() {
+    this.esperando=true;
     // Not working on iOS standalone mode!
     const stream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: 'environment' }
@@ -195,6 +216,7 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
    
     this.videoElement.play();
     requestAnimationFrame(this.scan.bind(this));
+    this.esperando=false;
   }
    
   async scan() {

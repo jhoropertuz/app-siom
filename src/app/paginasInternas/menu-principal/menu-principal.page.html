@@ -18,9 +18,9 @@
             <ion-button   color="light" size="small" >
                 <img  src="assets\img\accessibility-outline.svg" width="25px">
             </ion-button>
-            <ion-button   color="light" size="small" (click)="irRuta('escaneo-qr-oxigem')"> 
+            <!-- <ion-button   color="light" size="small" (click)="irRuta('escaneo-qr-oxigem/todos')"> 
                 <img src="assets\img\qr-code-outline.svg" width="25px"> 
-            </ion-button>
+            </ion-button> -->
           </div>
     
   </ion-item>
@@ -29,7 +29,7 @@
 <ion-content [fullscreen]="true">
   <div class="ion-padding">
 
-    <ion-card (click)="irRuta('listado-oxigem/entregar')">
+    <ion-card (click)="irRuta('escaneo-qr-oxigem/entregar')">
       <ion-card-header>
         <ion-row class="ion-align-items-center">
           <ion-col size="6">
@@ -59,7 +59,7 @@
         </ion-row>
       </ion-card-content>
     </ion-card>
-    <ion-card (click)="irRuta('listado-oxigem/recoger')">
+    <ion-card (click)="irRuta('escaneo-qr-oxigem/recoger')">
       <ion-card-header>
         <ion-row class="ion-align-items-center">
           <ion-col size="6">

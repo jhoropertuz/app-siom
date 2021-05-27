@@ -9,12 +9,15 @@
       <ion-back-button icon="chevron-back" defaultHref="menu-principal"></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="end" >
-      <ion-button size="small" (click)="irRuta('escaneo-qr-oxigem')" >
+     <!--  <ion-button size="small" (click)="irRuta('escaneo-qr-oxigem')" >
         <ion-icon name="qr-code-outline"  ></ion-icon>
-      </ion-button>
-      <ion-button  (click)="buscador()" size="small" >
+      </ion-button> -->
+      <ion-button *ngIf="!mostrarSeleccionados && !mostrarSeleccionado" (click)="buscador()" size="small" >
         <ion-icon *ngIf="buscar" name="search-circle"></ion-icon>
         <ion-icon *ngIf="!buscar" name="search"></ion-icon>
+      </ion-button>
+      <ion-button *ngIf="mostrarSeleccionados && !mostrarSeleccionado" (click)="inicioLista()" size="small" >
+        <ion-icon name="list-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -26,30 +29,121 @@
       <ion-refresher-content></ion-refresher-content>
     </ion-refresher>
     <div class="ion-padding">
-<ion-row  >
-  <ion-col  *ngFor="let item of listado" size-lg="6"  size="12">
-    <ion-item lines="none" style="margin: 2px;" class="animate__animated animate__fadeInUpBig">
-      <ion-grid>
-        <ion-row class="ion-align-items-center">
-           <!-- <ion-col size="2">
-            <ion-icon name="calendar-outline" style="background: #ed576b" ></ion-icon> 
-          </ion-col>  -->
-          <ion-col size="9">
-            <h4>  <strong>{{item.servicioCodigo}}</strong> </h4>
-            <p> Cliente : {{item.personaRazonSocial}} <br> Retener : 70000 <br> Recogida : {{item.reciboFechaRecogida}} </p>
-            <ion-buttons>
-              <ion-button fill="clear" size="small" disabled (click)="irRuta('detalles-usuario/'+7)"><ion-icon name="person-outline" class="ion-icon-b"></ion-icon></ion-button>
-              <ion-button fill="clear" size="small" disabled (click)="irRuta('recoger-oxigem/21')"><ion-icon name="map-outline" class="ion-icon-b"></ion-icon></ion-button>
-            </ion-buttons>
+        <ion-row *ngIf="!mostrarSeleccionados && !mostrarSeleccionado" >
+          <ion-col>
+            <ion-item lines="none" *ngIf="equiposSeleccionados.length>0">
+            
+              <ion-label class="text-center">
+                <p>Equipos Seleccionados {{equiposSeleccionados.length}}</p>
+                <ion-button  (click)="mostrarListaSeleccionados()" color="success" size="small" >Finalizar</ion-button>
+                <ion-button  (click)="reiniciarSeleccionados()" color="primary" size="small" >Reiniciar</ion-button>
+              </ion-label>
+            </ion-item>
           </ion-col>
-          <ion-col class="text-right" size="3" >
-            <ion-button fill="clear" size="large" (click)="irAccion(item)" ><ion-icon name="chevron-forward" slot="end" class="ion-icon-a"></ion-icon></ion-button>
+          <ion-col  *ngFor="let item of listado" size-lg="6"  size="12">
+            <ion-item lines="none" style="margin: 2px;" class="animate__animated animate__fadeInUpBig">
+              <ion-grid>
+                <ion-row class="ion-align-items-center">
+                  <!-- <ion-col size="2">
+                    <ion-icon name="calendar-outline" style="background: #ed576b" ></ion-icon> 
+                  </ion-col>  -->
+                  <ion-col size="9">
+                    <h4>  <strong>{{item.servicioCodigo}}</strong> </h4>
+                    <p> Cliente : {{item.personaRazonSocial}} <br> Retener : 70000 <br> Recogida : {{item.reciboFechaRecogida}} </p>
+                    <ion-buttons>
+                      <ion-button fill="clear" size="small" disabled (click)="irRuta('detalles-usuario/'+7)"><ion-icon name="person-outline" class="ion-icon-b"></ion-icon></ion-button>
+                      <ion-button fill="clear" size="small" disabled (click)="irRuta('recoger-oxigem/21')"><ion-icon name="map-outline" class="ion-icon-b"></ion-icon></ion-button>
+                    </ion-buttons>
+                  </ion-col>
+                  <ion-col class="text-right" size="3" >
+                    <ion-button fill="clear" size="large" (click)="seleccionarEquipo(item)" ><ion-icon name="chevron-forward" slot="end" class="ion-icon-a"></ion-icon></ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-item>
           </ion-col>
         </ion-row>
-      </ion-grid>
-    </ion-item>
-  </ion-col>
-</ion-row>
+        <ion-row *ngIf="mostrarSeleccionado" >
+          <ion-col size="12">
+            <ion-item lines="none" style="margin: 2px;" class="animate__animated animate__fadeInUpBig">
+              <ion-grid>
+                <ion-row class="ion-align-items-center">
+                  <ion-col size="12" style="margin-bottom: 5%;">
+                    <ion-label >
+                      <ion-button  color="danger" (click)="cancelarSeleccion()">Cancelar</ion-button>
+                    </ion-label>
+                  </ion-col> 
+                  <ion-col size="12">
+                    <ion-label class="ion-text-wrap text-center">   
+                      <ion-text color="primary"><h2>Equipo</h2></ion-text>
+                      <strong>equipo:</strong> {{equipoSeleccionado.equipoTitulo}}<br>
+                      <strong>Serie:</strong> {{equipoSeleccionado.equipoSerial}}<br>
+                      <strong>Codigo Equipo:</strong> {{equipoSeleccionado.equipoCodigo}}<br><br>
+                      <ion-text color="primary"><h2>Cliente</h2></ion-text>
+                      <strong>Nombre:</strong> {{equipoSeleccionado.personaRazonSocial}}<br>
+                      <strong>CC:</strong> {{equipoSeleccionado.personaIdentificacion}}<br>
+                      <strong>Codigo Cliente:</strong> {{equipoSeleccionado.clienteCodigo}}<br>
+                      <strong>Correo:</strong> {{equipoSeleccionado.personaCorreoElectronico}}<br><br>
+                      <ion-text color="primary"><h2>Recibo</h2></ion-text>
+                      <strong>Numero:</strong> {{equipoSeleccionado.reciboNumero}}<br>
+                      <strong>Servicio:</strong> {{equipoSeleccionado.reciboServicio}}<br>
+                      <strong>Fecha Servicio:</strong> {{equipoSeleccionado.reciboFechaServicio}}<br>
+                      <strong>Fecha recogida:</strong> {{equipoSeleccionado.reciboFechaRecogida}}<br>
+                      <br><br>
+                      <ion-button *ngIf="listadoTipo=='recoger'" color="success" size="small" slot="end" (click)="guardarSeleccion('buen_estado')">Buen estado</ion-button>
+                      <ion-button *ngIf="listadoTipo=='recoger'" color="warning" size="small" slot="end" (click)="guardarSeleccion('perdido')">Perdido</ion-button>
+                      <ion-button *ngIf="listadoTipo=='recoger'" color="primary" size="small" slot="end" (click)="guardarSeleccion('devuelto')">Devuelto</ion-button>
+                      <ion-button *ngIf="listadoTipo=='entregar'" color="success" size="small" slot="end" (click)="gurdarSeleccionSinEstado()">Aceptar</ion-button>
+                    </ion-label>
+                  </ion-col> 
+                </ion-row>
+              </ion-grid>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="mostrarSeleccionados && !mostrarSeleccionado" >
+          <ion-col size="12" *ngFor="let equipo of equiposSeleccionados ;let i = index" size-lg="6"  size="12">
+            <ion-item lines="none" style="margin: 2px;" class="animate__animated animate__fadeInUpBig">
+              <ion-grid>
+                <ion-row class="ion-align-items-center">
+                  <!-- <ion-col size="2" style="margin: 0%; padding: 0%;">
+                      <ion-icon name="checkmark-outline"  style="background: #57ed95;margin: 0%; padding: 0%;" ></ion-icon>
+                  </ion-col>  --> 
+                  <ion-col size="10">
+                    <ion-label (click)="active = !active" >
+                      <strong>{{equipo.equipoTitulo}}</strong>  <br>
+                      <strong> Codigo Cliente:</strong> {{equipo.clienteCodigo}}<br>
+                      <strong> CC: </strong> {{equipo.personaIdentificacion}}<br>
+                      <strong>nombre:</strong> {{equipo.personaRazonSocial}}<br>
+                      <ion-label [hidden]="active"   >
+                        <strong>Correo:</strong> {{equipo.personaCorreoElectronico}}<br>
+                        <strong>Numero:</strong> {{equipo.reciboNumero}}<br>
+                        <strong>Servicio:</strong> {{equipo.reciboServicio}}<br>
+                        <strong>Fecha Servicio:</strong> {{equipo.reciboFechaServicio}}<br>
+                        <strong>Fecha recogida:</strong> {{equipo.reciboFechaRecogida}}<br>
+                      </ion-label>
+                    </ion-label>
+                  </ion-col>
+                  <ion-col class="text-right" size="2" >
+                    <ion-button (click)="eliminarSeleccion(i)" size="small" fill="clear" ><ion-icon style="background: white"  name="close-outline" color="danger"></ion-icon></ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-item>
+          </ion-col>
+          <ion-col size="12" style="margin-top: 5%;">
+            <ion-label >
+              <ion-item lines="none">
+                <ion-label class="text-center">
+                  <ion-button color="success" *ngIf="listadoTipo!='recoger' && listadoTipo!='entregar'" style="width: 100%;" size="large" slot="start" (click)="finalizarSelecciones('entrega-oxigem')">Entregar</ion-button><br>
+                  <ion-button color="primary" *ngIf="listadoTipo!='recoger' && listadoTipo!='entregar'" style="width: 100%;" size="large" slot="end" (click)="finalizarSelecciones('recoger-oxigem')">Recoger</ion-button>
+                  <ion-button color="success" *ngIf="listadoTipo=='entregar'" style="width: 100%;" size="large" slot="start" (click)="finalizarSelecciones('entrega-oxigem')">Continuar Entregar</ion-button><br>
+                  <ion-button color="primary" *ngIf="listadoTipo=='recoger'" style="width: 100%;" size="large" slot="end" (click)="finalizarSelecciones('recoger-oxigem')">Continuar Recogida</ion-button>
+                </ion-label>
+              </ion-item>
+            </ion-label>
+          </ion-col> 
+        </ion-row>
 </div>
 </ion-content>
 

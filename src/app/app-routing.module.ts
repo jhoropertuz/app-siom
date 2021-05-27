@@ -28,7 +28,7 @@ const routes: Routes = [
     loadChildren: () => import('./paginasInternas/menu-principal/menu-principal.module').then( m => m.MenuPrincipalPageModule)
   },
   {
-    path: 'escaneo-qr-oxigem',
+    path: 'escaneo-qr-oxigem/:tipo',
     canActivate: [AuthGuard],
     loadChildren: () => import('./paginasInternas/escaneo-qr-oxigem/escaneo-qr-oxigem.module').then( m => m.EscaneoQrOxigemPageModule)
   },
