@@ -152,6 +152,7 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
   }
 
   irAlistaEquipos(){
+    this.stopScan(); 
     this.Router.navigateByUrl("listado-oxigem/"+this.accion);
   }
  

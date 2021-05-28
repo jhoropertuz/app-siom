@@ -124,24 +124,25 @@ export class RecogerOxigemPage implements OnInit {
   recogido(){
     let persona=Object.assign(this.form_registrar_persona.value, this.form_persona.value);
     persona.personaId=this.personaId;
-    let equiposID=this.equipos.map(res=>{
-      return res.equipoId; 
-    });
-    
-    console.log({firmaBase64:this.firmaBase64,coordenadas:this.coordenadas,equipos:equiposID,persona:persona});
-    
-    /* alert("recogido");
+    let equiposID=this.equipos.map(res=>{return {equipoID:res.equipoId,clienteID:res.clienteId,clientePersona:res.clientePersona,estadoEntregaEquipo:res.estadoEntregaEquipo};});
+    let datos={
+      firmaBase64:this.firmaBase64,
+      coordenadas:this.coordenadas,
+      equipos:equiposID,
+      persona:persona
+    };
+    console.log(datos);
     let loading=this.BaseService.presentLoading();
-      this.BaseService.postJson('ServiciosEquipo','buscarPorId',"").subscribe(res=>{
+      this.BaseService.postJson('repartidores','movimientosEquipos',"registrarRecogidaEquipos",datos).subscribe(res=>{
         console.log(res);
         if (res.RESPUESTA="EXITO") {
-          this.Servicio=res.DATOS;
+          alert("exitoso");
         }else{
           this.Sweetalert.modal("error",res.MENSAJE);
         }
         loading.then(e=>{
           e.dismiss();});
-      }); */
+      });
   }
 
   firmaBase64Event($event){
