@@ -74,7 +74,7 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
     this.canvasContext = this.canvasElement.getContext('2d');
     this.videoElement = this.video.nativeElement;
     /* this.startScan(); */ 
-    this.buscarEquipo("AS1018115");
+    this.buscarEquipo("17060994");
   }
 
 
