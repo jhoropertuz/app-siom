@@ -25,6 +25,7 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
   accion="";
   active=true;
   active1=true;
+  puedoEnsenderCamara=true;
   cliente={
     clienteCodigo:"",
     personaIdentificacion:"",
@@ -52,6 +53,8 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
   ngOnInit() {
     //la accion puede ser recoger o entregar o ninguna
     this.accion=this.ActivatedRoute.snapshot.params.tipo;
+    console.log(this.accion);
+    this.puedoEnsenderCamara=true;
    
   }@ViewChild('video', { static: false }) video: ElementRef;
   @ViewChild('canvas', { static: false }) canvas: ElementRef;
@@ -95,7 +98,7 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
     });
   }
 
-  AceptarEscaneo(estado){
+  AceptarEscaneo(estado=null){
     this.equipoEscaneado.estadoEntregaEquipo=estado;
     this.equipos.push(this.equipoEscaneado);
     this.verEscaner=true;
@@ -147,8 +150,10 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
   }
 
   finalizarEscaneo(ruta){
-    this.Router.navigateByUrl(ruta);
+    console.log(this.equipos);
+    this.stopScan(); 
     this.DatosEquiposService.setEquipos(this.equipos);
+    this.Router.navigateByUrl(ruta);
   }
 
   irAlistaEquipos(){
@@ -187,7 +192,7 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
   }
  
   stopScan() {
-    
+    this.puedoEnsenderCamara=false;
     try {
       this.videoElement.srcObject.getVideoTracks().forEach(function (track) {
         track.stop();
@@ -202,21 +207,23 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
 
 
   async startScan() {
+    this.puedoEnsenderCamara=true;
     this.esperando=true;
     // Not working on iOS standalone mode!
     const stream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: 'environment' }
-    });
-   
+    }); 
     this.videoElement.srcObject = stream;
     // Required for Safari
     this.videoElement.setAttribute('playsinline', true);
-   
-    this.loading = await this.loadingCtrl.create({});
-    await this.loading.present();
-   
-    this.videoElement.play();
-    requestAnimationFrame(this.scan.bind(this));
+    if(this.puedoEnsenderCamara){
+      this.loading = await this.loadingCtrl.create({});
+      await this.loading.present();
+      this.videoElement.play();
+      requestAnimationFrame(this.scan.bind(this));
+    }else{
+      this.stopScan();
+    }
     this.esperando=false;
   }
    

@@ -71,4 +71,7 @@ export class AppComponent implements OnInit {
      this.menu.enable(false,"menu");
      this.Router.navigateByUrl("login");
   }
+  irRuta(ruta){
+    this.Router.navigateByUrl(ruta);
+  }
 }

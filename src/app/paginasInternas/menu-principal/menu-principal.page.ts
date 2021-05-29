@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuController } from '@ionic/angular';
 import { SweetalertService } from 'src/app/service/sweetalert.service';
+
 @Component({
   selector: 'app-menu-principal',
   templateUrl: './menu-principal.page.html',
@@ -9,12 +10,13 @@ import { SweetalertService } from 'src/app/service/sweetalert.service';
 })
 export class MenuPrincipalPage implements OnInit {
 
-  constructor( public SweetalertService:SweetalertService ,private MenuController:MenuController,public Router:Router) { }
+  constructor(public SweetalertService:SweetalertService ,private MenuController:MenuController,public Router:Router) { }
 
   ngOnInit() {
     this.MenuController.enable(true, 'menu');
+    /* var url="https://siom.oximeiser.com/archivos/oximeiser/servicios/280521123638/recibos-equipos/008777-60b12a266ab45.pdf";    
+    window.open(url, 'Download'); */
   }
-
 
   irRuta(ruta){
     if(ruta=="listado-oxigem/entregar"){

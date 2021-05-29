@@ -50,13 +50,8 @@ export class ListadoOxigemPage implements OnInit {
     }
   } */
 
-  guardarSeleccion(estado){
+  guardarSeleccion(estado=null){
     this.equipoSeleccionado.estadoEntregaEquipo=estado;
-    this.equiposSeleccionados.push(this.equipoSeleccionado);
-    this.inicioLista();
-  }
-
-  gurdarSeleccionSinEstado(){
     this.equiposSeleccionados.push(this.equipoSeleccionado);
     this.inicioLista();
   }

@@ -24,10 +24,13 @@ export class RecogerOxigemPage implements OnInit {
   registrarPersona=false;
   formularioCompleto=false;
   personaId="";
-
+  documentosServicios=[];
+  mostrarDocumentos=false;
+  permisosFirma:boolean=false;
   constructor(private AuthService:AuthService ,public formBuilder: FormBuilder,public DatosEquiposService: DatosEquiposService,public Router:Router,private BaseService:BaseService, public Sweetalert:SweetalertService,private ActivatedRoute: ActivatedRoute) { 
     this.equipos=this.DatosEquiposService.getEquipos();
     if(this.equipos.length){
+      console.log("ingresando a recoger");
       console.log(this.equipos);
     }else{
         this.Sweetalert.notificacion("info","Datos Insuficientes.")
@@ -37,16 +40,17 @@ export class RecogerOxigemPage implements OnInit {
   }
 
   ngOnInit() {
+    this.mostrarDocumentos=false;
     this.form_persona = this.formBuilder.group({
       personaTipoIdentificacion: new FormControl('1', Validators.compose([Validators.required])),
       personaIdentificacion: new FormControl('', Validators.compose([Validators.required]))
     });
 
     this.form_registrar_persona = this.formBuilder.group({
-      personaNombres: new FormControl(''),
-      personaApellidos: new FormControl(''),
-      personaCelular: new FormControl(''),
-      personaCorreoElectronico: new FormControl('')
+      personaNombres: new FormControl('', Validators.compose([Validators.required])),
+      personaApellidos: new FormControl('', Validators.compose([Validators.required])),
+      personaCelular: new FormControl('', Validators.compose([Validators.required])),
+      personaCorreoElectronico: new FormControl('', Validators.compose([Validators.required]))
     });
 
     Plugins.Geolocation.getCurrentPosition().then(result => {
@@ -73,10 +77,21 @@ export class RecogerOxigemPage implements OnInit {
     ],
     'personaNombres': [
       { type: 'required', message: 'Nombres es requerida.' }
+    ],
+    'personaApellidos': [
+      { type: 'required', message: 'Apellidos es requerida.' }
+    ],
+    'personaCelular': [
+      { type: 'required', message: 'Celular es requerida.' }
+    ],
+    'personaCorreoElectronico': [
+      { type: 'required', message: 'Correo es requerida.' }
     ]
   };
   
-  
+  irRuta(ruta){
+    this.Router.navigateByUrl(ruta);
+  }
   buscarPersona(value){
     this.registrarPersona=false;
     this.formularioCompleto=false;
@@ -114,7 +129,7 @@ export class RecogerOxigemPage implements OnInit {
       allowEditing: true,
       resultType: Plugins.CameraResultType.Uri
     });
-    alert("ok");
+   /*  alert("ok"); */
     let  imageUrl = image.webPath;
     console.log(image);
   }
@@ -132,20 +147,32 @@ export class RecogerOxigemPage implements OnInit {
       persona:persona
     };
     console.log(datos);
-    let loading=this.BaseService.presentLoading();
+    if(this.permisosFirma && this.firmaBase64 ){
+      let loading=this.BaseService.presentLoading();
       this.BaseService.postJson('repartidores','movimientosEquipos',"registrarRecogidaEquipos",datos).subscribe(res=>{
         console.log(res);
         if (res.RESPUESTA="EXITO") {
-          alert("exitoso");
+          this.Sweetalert.notificacion("success","Recolección exitosa")
+          this.documentosServicios=res.DATOS;
+          this.mostrarDocumentos=true;
         }else{
           this.Sweetalert.modal("error",res.MENSAJE);
         }
         loading.then(e=>{
           e.dismiss();});
       });
+    }else{
+      this.Sweetalert.modal("info","Datos insuficientes para la operación.");
+    }
+    
+    
   }
 
   firmaBase64Event($event){
     this.firmaBase64=$event;
+  }
+
+  permisoFirma(){
+    console.log(this.permisosFirma);
   }
 }

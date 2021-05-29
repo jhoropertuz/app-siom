@@ -1,156 +1,203 @@
 <ion-header class="ion-no-border"  >
   <ion-toolbar>
-    <ion-title>Recoger Equipo</ion-title>
     <ion-buttons slot="start">
-      <ion-back-button slot="start" icon="chevron-back" defaultHref="listado-oxigem/recoger"></ion-back-button>
+      <ion-back-button icon="chevron-back" defaultHref=""></ion-back-button>
     </ion-buttons>
+    <ion-title>Recoger Equipo</ion-title>
     
-    <ion-buttons slot="end" >
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
-  <ion-grid>
-    <ion-row >
-      <ion-col size="12" >
-        <strong>Persona</strong>
-      </ion-col>
-    </ion-row>
-    <ion-row >
-      <ion-col size="12"  class="text-center">
-        <form [formGroup]="form_persona"
-        (ngSubmit)="buscarPersona(form_persona.value)">
+  <ng-container *ngIf="!mostrarDocumentos" >
+    <ion-grid>
+      <ion-row >
+        <ion-col size="12" >
+          <strong>Persona</strong>
+        </ion-col>
+      </ion-row>
+      <ion-row >
+        <ion-col size="12"  class="text-center">
+          <form [formGroup]="form_persona"
+          (ngSubmit)="buscarPersona(form_persona.value)">
+            <ion-item>
+              <ion-label position="floating" color="primary">Tipo identificación</ion-label>
+              <ion-select  formControlName="personaTipoIdentificacion" placeholder="Seleccione">
+                    <ion-select-option value="1">CC</ion-select-option>
+                    <ion-select-option value="2">NIT</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <div class="validation-errors">
+              <ng-container *ngFor="let validation of
+                validation_messages.personaTipoIdentificacion">
+                <ion-text color="danger" style="display:block;float: none;
+                  width: 100%" class="error-message"
+                  *ngIf="form_persona.get('personaTipoIdentificacion').hasError(validation.type)
+                  && (form_persona.get('personaTipoIdentificacion').dirty ||
+                  form_persona.get('personaTipoIdentificacion').touched)">
+                  <ion-icon name="information-circle-outline"></ion-icon> {{
+                  validation.message }}
+                </ion-text>
+              </ng-container>
+            </div>
           <ion-item>
-            <ion-label position="floating" color="primary">Tipo identificación</ion-label>
-            <ion-select  formControlName="personaTipoIdentificacion" placeholder="Seleccione">
-                  <ion-select-option value="1">CC</ion-select-option>
-                  <ion-select-option value="2">NIT</ion-select-option>
-            </ion-select>
+            <ion-label position="floating" color="primary">Identificación</ion-label>
+            <ion-input type="text" formControlName="personaIdentificacion"></ion-input>
           </ion-item>
           <div class="validation-errors">
             <ng-container *ngFor="let validation of
-              validation_messages.personaTipoIdentificacion">
+              validation_messages.personaIdentificacion">
               <ion-text color="danger" style="display:block;float: none;
                 width: 100%" class="error-message"
-                *ngIf="form_persona.get('personaTipoIdentificacion').hasError(validation.type)
-                && (form_persona.get('personaTipoIdentificacion').dirty ||
-                form_persona.get('personaTipoIdentificacion').touched)">
+                *ngIf="form_persona.get('personaIdentificacion').hasError(validation.type)
+                && (form_persona.get('personaIdentificacion').dirty ||
+                form_persona.get('personaIdentificacion').touched)">
                 <ion-icon name="information-circle-outline"></ion-icon> {{
                 validation.message }}
               </ion-text>
             </ng-container>
           </div>
-        <ion-item>
-          <ion-label position="floating" color="primary">Identificación</ion-label>
-          <ion-input type="text" formControlName="personaIdentificacion"></ion-input>
-        </ion-item>
-        <div class="validation-errors">
-          <ng-container *ngFor="let validation of
-            validation_messages.personaIdentificacion">
-            <ion-text color="danger" style="display:block;float: none;
-              width: 100%" class="error-message"
-              *ngIf="form_persona.get('personaIdentificacion').hasError(validation.type)
-              && (form_persona.get('personaIdentificacion').dirty ||
-              form_persona.get('personaIdentificacion').touched)">
-              <ion-icon name="information-circle-outline"></ion-icon> {{
-              validation.message }}
-            </ion-text>
-          </ng-container>
-        </div>
-          <ion-button color="primary" style="margin-top: 50px;"
-            class="submit-btn"expand="full" type="submit"
-            [disabled]="!form_persona.valid">Buscar</ion-button>
-        </form>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+            <ion-button color="primary" style="margin-top: 50px;"
+              class="submit-btn"expand="full" type="submit"
+              [disabled]="!form_persona.valid">Buscar</ion-button>
+          </form>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  
+    <ion-grid  *ngIf="registrarPersona" >
+      <ion-row >
+        <ion-col size="12" >
+          <strong>Datos Persona</strong>
+        </ion-col>
+      </ion-row>
+      <ion-row >
+        <ion-col size="12"  class="text-center">
+          <form [formGroup]="form_registrar_persona">
+          <ion-item>
+            <ion-label position="floating" color="primary">Nombres</ion-label>
+            <ion-input type="text" formControlName="personaNombres"></ion-input>
+          </ion-item>
+         <div class="validation-errors">
+            <ng-container *ngFor="let validation of
+              validation_messages.personaNombres">
+              <ion-text color="danger" style="display:block;float: none;
+                width: 100%" class="error-message"
+                *ngIf="form_registrar_persona.get('personaNombres').hasError(validation.type)
+                && (form_registrar_persona.get('personaNombres').dirty ||
+                form_registrar_persona.get('personaNombres').touched)">
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
+              </ion-text>
+            </ng-container>
+          </div> 
+          <ion-item>
+            <ion-label position="floating" color="primary">Apellidos</ion-label>
+            <ion-input type="text" formControlName="personaApellidos"></ion-input>
+          </ion-item>
+          <div class="validation-errors">
+            <ng-container *ngFor="let validation of
+              validation_messages.personaApellidos">
+              <ion-text color="danger" style="display:block;float: none;
+                width: 100%" class="error-message"
+                *ngIf="form_registrar_persona.get('personaApellidos').hasError(validation.type)
+                && (form_registrar_persona.get('personaApellidos').dirty ||
+                form_registrar_persona.get('personaApellidos').touched)">
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
+              </ion-text>
+            </ng-container>
+          </div> 
+          <ion-item>
+            <ion-label position="floating" color="primary">Numero celular</ion-label>
+            <ion-input type="text" formControlName="personaCelular"></ion-input>
+          </ion-item>
+          <div class="validation-errors">
+            <ng-container *ngFor="let validation of
+              validation_messages.personaCelular">
+              <ion-text color="danger" style="display:block;float: none;
+                width: 100%" class="error-message"
+                *ngIf="form_registrar_persona.get('personaCelular').hasError(validation.type)
+                && (form_registrar_persona.get('personaCelular').dirty ||
+                form_registrar_persona.get('personaCelular').touched)">
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
+              </ion-text>
+            </ng-container>
+          </div> 
+  
+          <ion-item>
+            <ion-label position="floating" color="primary">Correo electronico</ion-label>
+            <ion-input type="text" formControlName="personaCorreoElectronico"></ion-input>
+          </ion-item>
+          <div class="validation-errors">
+            <ng-container *ngFor="let validation of
+              validation_messages.personaCorreoElectronico">
+              <ion-text color="danger" style="display:block;float: none;
+                width: 100%" class="error-message"
+                *ngIf="form_registrar_persona.get('personaCorreoElectronico').hasError(validation.type)
+                && (form_registrar_persona.get('personaCorreoElectronico').dirty ||
+                form_registrar_persona.get('personaCorreoElectronico').touched)">
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
+              </ion-text>
+            </ng-container>
+          </div> 
+          </form>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+   
+    <ion-grid *ngIf="formularioCompleto">
+      <ion-row>
+        <ion-col size="12">
+          <p>Firma</p>
+          <app-firma (firmaBase64Event)="firmaBase64Event($event)"></app-firma>
+        </ion-col>
+        <!-- <ion-col size="12">
+          <img src="{{firmaBase64}}" />
+        </ion-col> -->
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <ion-list>
+            <ion-item>
+              <ion-label>Nos autoriza para utilizar su firma en los procesos necesarios del servicio.</ion-label>
+              <ion-checkbox slot="start" color="success" [(ngModel)]="permisosFirma" (ionChange)="permisoFirma()"></ion-checkbox>
+            </ion-item>
+          </ion-list>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <ion-button (click)="recogido()" [disabled]="!form_registrar_persona.valid" expand="block"  shape="round" color="success" >
+             Recogido
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ng-container>
 
-  <ion-grid  *ngIf="registrarPersona" >
-    <ion-row >
-      <ion-col size="12" >
-        <strong>Datos Persona</strong>
-      </ion-col>
-    </ion-row>
-    <ion-row >
-      <ion-col size="12"  class="text-center">
-        <form [formGroup]="form_registrar_persona">
-        <ion-item>
-          <ion-label position="floating" color="primary">Nombres</ion-label>
-          <ion-input type="text" formControlName="personaNombres"></ion-input>
-        </ion-item>
-        <!-- <div class="validation-errors">
-          <ng-container *ngFor="let validation of
-            validation_messages.personaRazonSocial">
-            <ion-text color="danger" style="display:block;float: none;
-              width: 100%" class="error-message"
-              *ngIf="form_persona.get('personaRazonSocial').hasError(validation.type)
-              && (form_persona.get('personaRazonSocial').dirty ||
-              form_persona.get('personaRazonSocial').touched)">
-              <ion-icon name="information-circle-outline"></ion-icon> {{
-              validation.message }}
-            </ion-text>
-          </ng-container>
-        </div> -->
-        <ion-item>
-          <ion-label position="floating" color="primary">Apellidos</ion-label>
-          <ion-input type="text" formControlName="personaApellidos"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label position="floating" color="primary">Numero celular</ion-label>
-          <ion-input type="text" formControlName="personaCelular"></ion-input>
-        </ion-item>
-        <!-- <div class="validation-errors">
-          <ng-container *ngFor="let validation of
-            validation_messages.personaCelular">
-            <ion-text color="danger" style="display:block;float: none;
-              width: 100%" class="error-message"
-              *ngIf="form_persona.get('personaCelular').hasError(validation.type)
-              && (form_persona.get('personaCelular').dirty ||
-              form_persona.get('personaCelular').touched)">
-              <ion-icon name="information-circle-outline"></ion-icon> {{
-              validation.message }}
-            </ion-text>
-          </ng-container>
-        </div> -->
 
+  <ng-container *ngIf="mostrarDocumentos" >
+    <ion-row >
+      <ion-col>
         <ion-item>
-          <ion-label position="floating" color="primary">Correo electronico</ion-label>
-          <ion-input type="text" formControlName="personaCorreoElectronico"></ion-input>
+          <ion-label class="text-center">
+            <ion-button  (click)="irRuta('menu-principal')" color="primary" size="small" >Ir a inicio</ion-button>
+          </ion-label>
         </ion-item>
-       <!--  <div class="validation-errors">
-          <ng-container *ngFor="let validation of
-            validation_messages.personaCorreoElectronico">
-            <ion-text color="danger" style="display:block;float: none;
-              width: 100%" class="error-message"
-              *ngIf="form_persona.get('personaCorreoElectronico').hasError(validation.type)
-              && (form_persona.get('personaCorreoElectronico').dirty ||
-              form_persona.get('personaCorreoElectronico').touched)">
-              <ion-icon name="information-circle-outline"></ion-icon> {{
-              validation.message }}
-            </ion-text>
-          </ng-container>
-        </div> -->
-        </form>
+      </ion-col>
+      <ion-col  *ngFor="let documentoServicio of documentosServicios" size-lg="6"  size="12">
+        <ion-item lines="none" style="margin: 2px;" class="animate__animated animate__fadeInUpBig">
+          <ion-grid>
+            <ion-row class="ion-align-items-center">
+              <ion-col size="12">
+                <a ion-button href="{{documentoServicio.documentoURL}}" download="{{documentoServicio.servicioCODIGO}}.pdf" target="_blank" >Decargar recibo de Servicio {{documentoServicio.servicioCODIGO}}</a>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-item>
       </ion-col>
     </ion-row>
-  </ion-grid>
- 
-  <ion-grid *ngIf="formularioCompleto">
-    <ion-row>
-      <ion-col size="12">
-        <p>Firma</p>
-        <app-firma (firmaBase64Event)="firmaBase64Event($event)"></app-firma>
-      </ion-col>
-      <!-- <ion-col size="12">
-        <img src="{{firmaBase64}}" />
-      </ion-col> -->
-    </ion-row>
-    <ion-row>
-      <ion-col size="12">
-        <ion-button (click)="recogido()" expand="block"  shape="round" color="success" >
-           Recogido
-        </ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  </ng-container>
 </ion-content>
