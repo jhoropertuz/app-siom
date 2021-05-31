@@ -44,6 +44,13 @@ export class BaseService {
     return this.http.patch<any>(Endpoind.API_BASE+url,Data);
   }
 
+  login(componente,controlador,operacion,Data:any={}):Observable<any>{
+    Data.componente=componente;
+    Data.controlador=controlador;
+    Data.accion=operacion;
+    return this.http.post<any>(Endpoind.API_BASE,Data);
+  }
+
   /* sesion(controlador="sesion",operacion="ApiPorIdentificacion",Data:any={},loading=true):Observable<any>{
     Data.controlador=controlador;
     Data.accion=operacion;

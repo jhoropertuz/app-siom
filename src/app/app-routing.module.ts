@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
+import { LoginGuard } from './guards/login.guard';
 
 const routes: Routes = [
   {
@@ -10,6 +11,7 @@ const routes: Routes = [
   },
   {
     path: 'login',
+    canActivate:[LoginGuard],
     loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
   },
   {
@@ -41,6 +43,11 @@ const routes: Routes = [
     path: 'listado-oxigem/:tipo',
     canActivate: [AuthGuard],
     loadChildren: () => import('./paginasInternas/listado-oxigem/listado-oxigem.module').then( m => m.ListadoOxigemPageModule)
+  },
+  {
+    path: 'recibos-servicios',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./paginasInternas/recibos-servicios/recibos-servicios.module').then( m => m.RecibosServiciosPageModule)
   }
 ];
 

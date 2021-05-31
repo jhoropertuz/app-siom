@@ -6,7 +6,7 @@
     </ion-buttons> -->
     <ion-title>{{titulo}}</ion-title>
     <ion-buttons slot="start">
-      <ion-back-button icon="chevron-back" defaultHref="menu-principal"></ion-back-button>
+      <ion-back-button icon="chevron-back" ></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="end" >
      <!--  <ion-button size="small" (click)="irRuta('escaneo-qr-oxigem')" >
@@ -102,7 +102,7 @@
           </ion-col>
         </ion-row>
         <ion-row *ngIf="mostrarSeleccionados && !mostrarSeleccionado" >
-          <ion-col size="12" *ngFor="let equipo of equiposSeleccionados ;let i = index" size-lg="6"  size="12">
+          <ion-col size="12" *ngFor="let equipo of equiposSeleccionados ;let index = index" size-lg="6"  size="12">
             <ion-item lines="none" style="margin: 2px;" class="">
               <ion-grid>
                 <ion-row class="ion-align-items-center">
@@ -110,12 +110,12 @@
                       <ion-icon name="checkmark-outline"  style="background: #57ed95;margin: 0%; padding: 0%;" ></ion-icon>
                   </ion-col>  --> 
                   <ion-col size="10">
-                    <ion-label (click)="active = !active" >
+                    <ion-label (click)="openIndex=openIndex === index ? -1 : index" >
                       <strong>{{equipo.equipoTitulo}}</strong>  <br>
                       <strong> Codigo Cliente:</strong> {{equipo.clienteCodigo}}<br>
                       <strong> CC: </strong> {{equipo.personaIdentificacion}}<br>
                       <strong>nombre:</strong> {{equipo.personaRazonSocial}}<br>
-                      <ion-label [hidden]="active"   >
+                      <ion-label *ngIf="openIndex === index"   >
                         <strong>Correo:</strong> {{equipo.personaCorreoElectronico}}<br>
                         <strong>Numero:</strong> {{equipo.reciboNumero}}<br>
                         <strong>Servicio:</strong> {{equipo.reciboServicio}}<br>

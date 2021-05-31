@@ -46,7 +46,7 @@ constructor(public formBuilder: FormBuilder, private router: Router, public Base
   onSubmitLogin(values){
     console.log(values);
    
-    this.BaseService.postJson('sistema','sesion','ApiValidarUsuario',values).subscribe(res=>{
+    this.BaseService.login('sistema','sesion','ApiValidarUsuario',values).subscribe(res=>{
       console.log(res);
       if(res.RESPUESTA=='EXITO'){
         this.AuthService.DatosUsuario(res.DATOS);

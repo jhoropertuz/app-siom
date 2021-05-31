@@ -7,6 +7,7 @@ import { SweetalertService } from 'src/app/service/sweetalert.service';
 import { FirmaComponent } from 'src/app/shareds/firma/firma.component';
 import { Plugins } from "@capacitor/core";
 import { AuthService } from 'src/app/service/auth.service';
+import { DatosServicioService } from 'src/app/service/datos-servicio.service';
 @Component({
   selector: 'app-recoger-oxigem',
   templateUrl: './recoger-oxigem.page.html',
@@ -24,10 +25,8 @@ export class RecogerOxigemPage implements OnInit {
   registrarPersona=false;
   formularioCompleto=false;
   personaId="";
-  documentosServicios=[];
-  mostrarDocumentos=false;
   permisosFirma:boolean=false;
-  constructor(private AuthService:AuthService ,public formBuilder: FormBuilder,public DatosEquiposService: DatosEquiposService,public Router:Router,private BaseService:BaseService, public Sweetalert:SweetalertService,private ActivatedRoute: ActivatedRoute) { 
+  constructor(public DatosServicioService:DatosServicioService,private AuthService:AuthService ,public formBuilder: FormBuilder,public DatosEquiposService: DatosEquiposService,public Router:Router,private BaseService:BaseService, public Sweetalert:SweetalertService,private ActivatedRoute: ActivatedRoute) { 
     this.equipos=this.DatosEquiposService.getEquipos();
     if(this.equipos.length){
       console.log("ingresando a recoger");
@@ -40,7 +39,6 @@ export class RecogerOxigemPage implements OnInit {
   }
 
   ngOnInit() {
-    this.mostrarDocumentos=false;
     this.form_persona = this.formBuilder.group({
       personaTipoIdentificacion: new FormControl('1', Validators.compose([Validators.required])),
       personaIdentificacion: new FormControl('', Validators.compose([Validators.required]))
@@ -153,8 +151,8 @@ export class RecogerOxigemPage implements OnInit {
         console.log(res);
         if (res.RESPUESTA="EXITO") {
           this.Sweetalert.notificacion("success","Recolección exitosa")
-          this.documentosServicios=res.DATOS;
-          this.mostrarDocumentos=true;
+          this.DatosServicioService.setRecibosServico(res.DATOS);
+          this.Router.navigateByUrl("recibos-servicios");
         }else{
           this.Sweetalert.modal("error",res.MENSAJE);
         }
