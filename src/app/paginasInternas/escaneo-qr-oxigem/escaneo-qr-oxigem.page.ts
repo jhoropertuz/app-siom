@@ -74,8 +74,8 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
     this.canvasElement = this.canvas.nativeElement;
     this.canvasContext = this.canvasElement.getContext('2d');
     this.videoElement = this.video.nativeElement;
-    /* this.startScan(); */ 
-    this.buscarEquipo("17060994");
+    this.startScan();  
+    /* this.buscarEquipo("17060994"); */
   }
 
 
@@ -151,9 +151,10 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
   }
 
   finalizarEscaneo(ruta){
+    this.DatosEquiposService.setEquipos(this.equipos);
+    console.log("saliendo de escaneo");
     console.log(this.equipos);
     this.stopScan(); 
-    this.DatosEquiposService.setEquipos(this.equipos);
     this.Router.navigateByUrl(ruta);
   }
 

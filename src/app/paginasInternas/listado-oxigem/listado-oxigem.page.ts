@@ -1,15 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MenuController } from '@ionic/angular';
 import { DatosEquiposService } from 'src/app/service/datos-equipos.service';
 import { BaseService } from '../../service/base.service';
 import { SweetalertService } from '../../service/sweetalert.service';
+import { IonInfiniteScroll } from '@ionic/angular';
 @Component({
   selector: 'app-listado-oxigem',
   templateUrl: './listado-oxigem.page.html',
   styleUrls: ['./listado-oxigem.page.scss'],
 })
 export class ListadoOxigemPage implements OnInit {
+  @ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll;
   buscar=false;
   buscarAnimacion=false;
   listadoTipo;
@@ -33,10 +35,8 @@ export class ListadoOxigemPage implements OnInit {
       this.getListadoRecoger();
     }else if(this.listadoTipo=='entregar'){
       this.titulo="Entregar"
-      this.getListadoRecoger();
+      this.getListadoEntregar();
     }
-
-
   }
  
   irRuta(ruta){
@@ -92,6 +92,24 @@ export class ListadoOxigemPage implements OnInit {
     this.equiposSeleccionados=[];
   }
 
+  loadData(event) {
+    setTimeout(() => {
+      console.log('Done'); 
+      event.target.complete();
+       if (this.listado.length == 1000) {
+        event.target.disabled = true;
+      } 
+      
+
+    }, 500);
+    
+  }
+
+  toggleInfiniteScroll() {
+    console.log("jdhkfjkj");
+    this.infiniteScroll.disabled = !this.infiniteScroll.disabled;
+  }
+
   buscador(){
     if(this.buscar){
       this.buscarAnimacion=false;
@@ -107,6 +125,26 @@ export class ListadoOxigemPage implements OnInit {
 
   buscando(){
 
+  }
+
+  getListadoEntregar(){
+    /* alert('cargar recoger'); */
+     this.BaseService.postJson('repartidores','movimientosEquipos','mostrarEntregadosAPI').subscribe(res=>{
+       if (res.RESPUESTA="EXITO") {
+        if (res.DATOS) {
+          this.listadoTodos=res.DATOS;
+          this.listado=this.listadoTodos;
+          this.listadoFilter=this.listadoTodos;
+          console.log(this.listadoTodos);
+        }else{
+          this.Sweetalert.notificacion("info","No se encontraron servicios.");
+        }
+       }else{
+         this.Sweetalert.modal("error",res.mensaje);
+       }
+      
+     });
+    
   }
 
   getListadoRecoger(){
@@ -129,9 +167,7 @@ export class ListadoOxigemPage implements OnInit {
     
   }
 
-  getListadoEntregar(){
-    /* alert('cargar recoger'); */
-  }
+ 
 
   doRefresh(event)  {
     this.getListadoRecoger();
