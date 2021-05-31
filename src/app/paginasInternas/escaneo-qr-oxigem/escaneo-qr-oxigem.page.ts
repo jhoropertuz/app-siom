@@ -13,6 +13,7 @@ import { SweetalertService } from 'src/app/service/sweetalert.service';
   styleUrls: ['./escaneo-qr-oxigem.page.scss'],
 })
 export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
+  openIndex;
   esperando=true;
   buscar=false;
   buscarAnimacion=false;

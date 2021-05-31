@@ -2,7 +2,6 @@ import { Component, OnInit,OnDestroy  } from '@angular/core';
 import { Router } from '@angular/router';
 import { DatosServicioService } from 'src/app/service/datos-servicio.service';
 import { SweetalertService } from 'src/app/service/sweetalert.service';
-import { threadId } from 'worker_threads';
 
 @Component({
   selector: 'app-recibos-servicios',

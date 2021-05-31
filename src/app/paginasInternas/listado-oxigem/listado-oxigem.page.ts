@@ -22,6 +22,7 @@ export class ListadoOxigemPage implements OnInit {
   mostrarSeleccionados=false;
   mostrarSeleccionado=false;
   active=true;
+  openIndex;
   constructor(public DatosEquiposService:DatosEquiposService ,public Router:Router,private ActivatedRoute: ActivatedRoute, public BaseService:BaseService,public Sweetalert:SweetalertService,private MenuController:MenuController) { }
 
   ngOnInit() {
