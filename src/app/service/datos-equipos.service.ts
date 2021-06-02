@@ -10,7 +10,11 @@ export class DatosEquiposService {
 
 
   setEquipos(equipos){
-    this.equipos=equipos;
+    return new Promise((resolve, reject) => {
+      this.equipos=equipos;
+      console.log("promesa set eqipo");
+      return resolve(true);
+    });
   }
 
   getEquipos(){

@@ -151,11 +151,13 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
   }
 
   finalizarEscaneo(ruta){
-    this.DatosEquiposService.setEquipos(this.equipos);
-    console.log("saliendo de escaneo");
-    console.log(this.equipos);
-    this.stopScan(); 
-    this.Router.navigateByUrl(ruta);
+    this.DatosEquiposService.setEquipos(this.equipos).then((val)=>{
+      console.log("saliendo de escaneo");
+      console.log(this.equipos);
+      this.stopScan(); 
+      this.Router.navigateByUrl(ruta);
+    });
+    
   }
 
   irAlistaEquipos(){

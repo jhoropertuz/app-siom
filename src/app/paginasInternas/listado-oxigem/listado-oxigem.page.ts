@@ -80,8 +80,9 @@ export class ListadoOxigemPage implements OnInit {
   }
 
   finalizarSelecciones(ruta){
-    this.DatosEquiposService.setEquipos(this.equiposSeleccionados);
-    this.Router.navigateByUrl(ruta); 
+    this.DatosEquiposService.setEquipos(this.equiposSeleccionados).then((val)=>{
+      this.Router.navigateByUrl(ruta); 
+    });
   }
 
   mostrarListaSeleccionados(){

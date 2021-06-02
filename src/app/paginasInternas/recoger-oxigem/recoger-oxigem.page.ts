@@ -27,6 +27,12 @@ export class RecogerOxigemPage implements OnInit {
   personaId="";
   permisosFirma:boolean=false;
   constructor(public DatosServicioService:DatosServicioService,private AuthService:AuthService ,public formBuilder: FormBuilder,public DatosEquiposService: DatosEquiposService,public Router:Router,private BaseService:BaseService, public Sweetalert:SweetalertService,private ActivatedRoute: ActivatedRoute) { 
+    
+   
+  }
+
+  ngOnInit() {
+
     this.equipos=this.DatosEquiposService.getEquipos();
     if(this.equipos.length){
       console.log("ingresando a recoger");
@@ -35,10 +41,7 @@ export class RecogerOxigemPage implements OnInit {
         this.Sweetalert.notificacion("info","Datos Insuficientes.")
         this.Router.navigateByUrl("menu-principal");
     }
-   
-  }
 
-  ngOnInit() {
     this.form_persona = this.formBuilder.group({
       personaTipoIdentificacion: new FormControl('1', Validators.compose([Validators.required])),
       personaIdentificacion: new FormControl('', Validators.compose([Validators.required]))
@@ -135,21 +138,23 @@ export class RecogerOxigemPage implements OnInit {
 
 
   recogido(){
-    let persona=Object.assign(this.form_registrar_persona.value, this.form_persona.value);
-    persona.personaId=this.personaId;
-    let equiposID=this.equipos.map(res=>{return {equipoID:res.equipoId,clienteID:res.clienteId,clientePersona:res.clientePersona,estadoEntregaEquipo:res.estadoEntregaEquipo};});
-    let datos={
-      firmaBase64:this.firmaBase64,
-      coordenadas:this.coordenadas,
-      equipos:equiposID,
-      persona:persona
-    };
-    console.log(datos);
-    if(this.permisosFirma && this.firmaBase64 ){
+
+    if(this.permisosFirma && this.firmaBase64 && this.equipos.length>0){
+      let persona=Object.assign(this.form_registrar_persona.value, this.form_persona.value);
+      persona.personaId=this.personaId;
+      let equiposID=this.equipos.map(res=>{return {equipoID:res.equipoId,clienteID:res.clienteId,clientePersona:res.clientePersona,estadoEntregaEquipo:res.estadoEntregaEquipo};});
+      let datos={
+        firmaBase64:this.firmaBase64,
+        coordenadas:this.coordenadas,
+        equipos:equiposID,
+        persona:persona
+      };
+      console.log(datos);
       let loading=this.BaseService.presentLoading();
       this.BaseService.postJson('repartidores','movimientosEquipos',"registrarRecogidaEquipos",datos).subscribe(res=>{
         console.log(res);
         if (res.RESPUESTA="EXITO") {
+          this.DatosEquiposService.deleteEquipos();
           this.Sweetalert.notificacion("success","Recolección exitosa")
           this.DatosServicioService.setRecibosServico(res.DATOS);
           this.Router.navigateByUrl("recibos-servicios");
