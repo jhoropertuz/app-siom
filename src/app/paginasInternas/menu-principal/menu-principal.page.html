@@ -1,7 +1,7 @@
 <ion-header class="ion-no-border">
   <ion-item lines="none">
     <ion-avatar slot="end" style="margin-right: 10px ;">
-      <img src="assets/profile.jpg">
+      <img src="{{usuarioAvatar}}">
     </ion-avatar>
     <!-- <ion-button fill="clear" color="light">
       <ion-icon slot="icon-only" name="menu"></ion-icon>
@@ -11,84 +11,99 @@
       <h2>Oximed</h2>
     </ion-label>
   </ion-item>
-  <ion-item lines="none"  class="ion-align-items-cente ion-text-right">
+  <!-- <ion-item lines="none"  class="ion-align-items-cente ion-text-right">
       
           
-          <div style="padding: 0%;">
+           <div style="padding: 0%;">
             <ion-button   color="light" size="small" >
                 <img  src="assets\img\accessibility-outline.svg" width="25px">
             </ion-button>
-            <!-- <ion-button   color="light" size="small" (click)="irRuta('escaneo-qr-oxigem/todos')"> 
+             <ion-button   color="light" size="small" (click)="irRuta('escaneo-qr-oxigem/todos')"> 
                 <img src="assets\img\qr-code-outline.svg" width="25px"> 
-            </ion-button> -->
-          </div>
+            </ion-button> 
+          </div> 
     
-  </ion-item>
+  </ion-item> -->
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <div class="ion-padding">
-
-    <ion-card (click)="irRuta('escaneo-qr-oxigem/entregar')">
-      <ion-card-header>
-        <ion-row class="ion-align-items-center">
-          <ion-col size="6">
-            <ion-badge color="success" mode="ios">
-              <ion-icon name="checkmark-outline"></ion-icon>
-              25
-            </ion-badge>
-          </ion-col>
-          <ion-col size="6" class="ion-text-right">
-            <ion-card-subtitle color="danger">30</ion-card-subtitle>
-          </ion-col>
-        </ion-row>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-img src="assets\img\ilustraciones\carroCamino.svg" style="width: 50%;" ></ion-img>
-        <ion-row>
-          <ion-col size="12" class="text-center">
-            <ion-card-title><strong>ENTREGAR</strong></ion-card-title>
-            
-          </ion-col>
-          <!--
-          <ion-col size="4" class="ion-text-right">
-            <ion-button fill="clear" color="dark" size="large" routerLink="/details">
-              <ion-icon slot="icon-only" name="chevron-forward-circle-outline"></ion-icon>
-            </ion-button>
-          </ion-col>-->
-        </ion-row>
-      </ion-card-content>
-    </ion-card>
     <ion-card (click)="irRuta('escaneo-qr-oxigem/recoger')">
       <ion-card-header>
         <ion-row class="ion-align-items-center">
-          <ion-col size="6">
+          <ion-col size="9">
             <ion-badge color="success" mode="ios">
-              <ion-icon name="checkmark-outline"></ion-icon>
-              3
+              <!-- <ion-icon name="checkmark-outline"></ion-icon> -->
+               De click aquí para recoger equipos
             </ion-badge>
           </ion-col>
-          <ion-col size="6" class="ion-text-right">
-            <ion-card-subtitle color="danger">10</ion-card-subtitle>
-          </ion-col>
+          <!-- <ion-col size="6" class="ion-text-right">
+            <ion-card-subtitle color="danger"></ion-card-subtitle>
+          </ion-col> -->
         </ion-row>
       </ion-card-header>
       <ion-card-content>
-        <ion-img src="assets\img\ilustraciones\card-multiples.svg" style="width: 50%;"></ion-img>
-        <ion-row>
+        <ion-img src="https://siom.oximeiser.com/libs/media/btn_recoger_app.png" style="width: 100%;"></ion-img>
+       <!--  <ion-row>
           <ion-col size="12" class="text-center">
             <ion-card-title class="text-center"><strong>RECOGER</strong></ion-card-title>
             
           </ion-col>
-          <!--
+          
           <ion-col size="4" class="ion-text-right">
             <ion-button fill="clear" color="dark" size="large" routerLink="/details">
               <ion-icon slot="icon-only" name="chevron-forward-circle-outline"></ion-icon>
             </ion-button>
-          </ion-col>-->
-        </ion-row>
+          </ion-col>
+        </ion-row> -->
       </ion-card-content>
     </ion-card>
+    <ion-card (click)="irRuta('escaneo-qr-oxigem/entregar')">
+      <ion-card-header>
+        <ion-row class="ion-align-items-center">
+          <ion-col size="9">
+            <ion-badge color="success" mode="ios">
+             <!--  <ion-icon name="checkmark-outline"></ion-icon> -->
+              De click aquí para entregar equipos
+            </ion-badge>
+          </ion-col>
+          <!-- <ion-col size="6" class="ion-text-right">
+            <ion-card-subtitle color="danger">30</ion-card-subtitle>
+          </ion-col> -->
+        </ion-row>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-img src="https://siom.oximeiser.com/libs/media/btn_entregar_app.png" style="width: 100%;" ></ion-img>
+        <!-- <ion-row>
+          <ion-col size="12" class="text-center">
+            <ion-card-title><strong>ENTREGAR</strong></ion-card-title>
+            
+          </ion-col>
+          
+          <ion-col size="4" class="ion-text-right">
+            <ion-button fill="clear" color="dark" size="large" routerLink="/details">
+              <ion-icon slot="icon-only" name="chevron-forward-circle-outline"></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row> -->
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-row class="ion-align-items-center">
+          <ion-col size="9">
+            <ion-badge color="success" mode="ios">
+               De click aquí para ver historial de equipos
+            </ion-badge>
+          </ion-col>
+        </ion-row>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-img src="https://siom.oximeiser.com/libs/media/btn_historial_app.png" style="width: 100%;"></ion-img>
+      </ion-card-content>
+    </ion-card>
+    
     <!-- <app-document-viewer></app-document-viewer> -->
   </div>
  

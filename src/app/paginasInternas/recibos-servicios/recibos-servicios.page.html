@@ -17,9 +17,15 @@
         <ion-item lines="none" style="margin: 2px;" class="animate__animated animate__fadeInUpBig">
           <ion-grid>
             <ion-row class="ion-align-items-center">
-              <ion-col size="12">
-                <a ion-button href="{{documentoServicio.documentoURL}}" download="{{documentoServicio.servicioCODIGO}}.pdf" target="_blank" >Decargar recibo de Servicio {{documentoServicio.servicioCODIGO}}</a>
-              </ion-col>
+              <ion-col size="4">
+                <img src="https://siom.oximeiser.com/libs/media/PDF-logo.png" alt="iconPDF" style="width: 100%;">
+             </ion-col>
+             <ion-col size="8">
+               <ion-label >
+                 <strong>{{documentoServicio.documentoTITULO}}</strong><br>
+                 <a ion-button size="small"  href="{{documentoServicio.documentoURL}}" download="{{documentoServicio.servicioCODIGO}}.pdf" target="_blank" >Decargar recibo de Servicio {{documentoServicio.servicioCODIGO}}</a>
+               </ion-label>
+             </ion-col>
             </ion-row>
           </ion-grid>
         </ion-item>

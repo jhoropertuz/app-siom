@@ -48,13 +48,17 @@
                   <!-- <ion-col size="2">
                     <ion-icon name="calendar-outline" style="background: #ed576b" ></ion-icon> 
                   </ion-col>  -->
-                  <ion-col size="9">
-                    <h4>  <strong>{{item.servicioCodigo}}</strong> </h4>
-                    <p> Cliente : {{item.personaRazonSocial}} <br> Recogida : {{item.reciboFechaRecogida}} </p>
-                    <ion-buttons>
+                  <ion-col size="9"  >
+                    
+                      <h4><strong>{{item.equipoTitulo}}</strong> </h4>
+                      <span>  SN : {{item.equipoSerial}}</span>
+                      <span> Codigo : {{item.equipoCodigo}} </span>
+                        <span>  Cliente : {{item.personaIdentificacion}} | {{item.personaRazonSocial}}</span>
+                    
+                   <!--  <ion-buttons>
                       <ion-button fill="clear" size="small" disabled (click)="irRuta('detalles-usuario/'+7)"><ion-icon name="person-outline" class="ion-icon-b"></ion-icon></ion-button>
                       <ion-button fill="clear" size="small" disabled (click)="irRuta('recoger-oxigem/21')"><ion-icon name="map-outline" class="ion-icon-b"></ion-icon></ion-button>
-                    </ion-buttons>
+                    </ion-buttons> -->
                   </ion-col>
                   <ion-col class="text-right" size="3" >
                     <ion-button fill="clear" size="large" (click)="seleccionarEquipo(item)" ><ion-icon name="chevron-forward" slot="end" class="ion-icon-a"></ion-icon></ion-button>
@@ -85,7 +89,9 @@
                       <ion-text color="primary"><h2>Equipo</h2></ion-text>
                       <strong>equipo:</strong> {{equipoSeleccionado.equipoTitulo}}<br>
                       <strong>Serie:</strong> {{equipoSeleccionado.equipoSerial}}<br>
-                      <strong>Codigo Equipo:</strong> {{equipoSeleccionado.equipoCodigo}}<br><br>
+                      <strong>Codigo Equipo:</strong> {{equipoSeleccionado.equipoCodigo}}<br>
+                      <strong>Tipo Equipo:</strong> {{equipoSeleccionado.tipoEquipoTitulo}}<br>
+                      <strong>Capacidad:</strong> {{equipoSeleccionado.equipoCapacidad}}<br><br>
                       <ion-text color="primary"><h2>Cliente</h2></ion-text>
                       <strong>Nombre:</strong> {{equipoSeleccionado.personaRazonSocial}}<br>
                       <strong>CC:</strong> {{equipoSeleccionado.personaIdentificacion}}<br>
@@ -95,7 +101,20 @@
                       <strong>Numero:</strong> {{equipoSeleccionado.reciboNumero}}<br>
                       <strong>Servicio:</strong> {{equipoSeleccionado.reciboServicio}}<br>
                       <strong>Fecha Servicio:</strong> {{equipoSeleccionado.reciboFechaServicio}}<br>
-                      <strong>Fecha recogida:</strong> {{equipoSeleccionado.reciboFechaRecogida}}<br>
+                      <strong>Fecha recogida:</strong> {{equipoSeleccionado.reciboFechaRecogida}}<br><br>
+
+                      <ng-container *ngIf="equipoSeleccionado.otrosPendientes">
+                        <ion-text color="primary"><h2>Otros Pendientes Por recoger</h2></ion-text>
+                          <ng-container *ngFor="let otro of equipoSeleccionado.otrosPendientes" >
+                            <ion-label style="border: solid red;" >
+                              <strong>equipo:</strong> {{otro.equipoTitulo}}<br>
+                              <strong>Codigo:</strong> {{otro.equipoCodigo}}<br>
+                            </ion-label>
+                          </ng-container>
+                      </ng-container>
+                      
+                      
+                      
                       <br><br>
                       <ion-button *ngIf="listadoTipo=='recoger'" color="success" size="small" slot="end" (click)="guardarSeleccion('buen_estado')">Buen estado</ion-button>
                       <ion-button *ngIf="listadoTipo=='recoger'" color="warning" size="small" slot="end" (click)="guardarSeleccion('perdido')">Perdido</ion-button>

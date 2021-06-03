@@ -3,7 +3,11 @@
       <ion-content>
         <ion-list id="inbox-list">
           <ion-list-header>Oximed</ion-list-header>
-          <ion-note *ngIf="usuario" >{{usuario.personaRazonSocial}}</ion-note>
+          <ion-note *ngIf="usuario" class="sato-lineas" >
+            <p>{{usuario.personaRazonSocial}}</p>
+            <p>{{usuario.personaIdentificacion}}</p>
+            <p>{{usuario.cargoEmpleadoTitulo}}</p>
+          </ion-note>
 
           <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">
             <ion-item (click)="selectedIndex = i" routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" [class.selected]="selectedIndex == i">
@@ -18,6 +22,14 @@
           <ion-item  lines="none" (click)="irRuta('menu-principal')" >
             <ion-icon  slot="start" name="home-outline"></ion-icon>
             <ion-label>Inicio</ion-label>
+          </ion-item>
+          <ion-item  lines="none" (click)="irRuta('escaneo-qr-oxigem/entregar')" >
+            <ion-icon slot="start" name="paper-plane-outline"></ion-icon>
+            <ion-label>Entregar</ion-label>
+          </ion-item>
+          <ion-item  lines="none" (click)="irRuta('escaneo-qr-oxigem/recoger')" >
+            <ion-icon slot="start" name="walk-outline"></ion-icon>
+            <ion-label>Recoger</ion-label>
           </ion-item>
           <ion-item  lines="none" (click)="salir()" >
             <ion-icon slot="start" ios="arrow-undo" md="arrow-undo"></ion-icon>

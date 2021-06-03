@@ -11,6 +11,9 @@ import { IonInfiniteScroll } from '@ionic/angular';
   styleUrls: ['./listado-oxigem.page.scss'],
 })
 export class ListadoOxigemPage implements OnInit {
+  cantidadItemLista=10;
+  inicioItemLista=0;
+  buscadorActivo=false;
   @ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll;
   buscar=false;
   buscarAnimacion=false;
@@ -67,8 +70,18 @@ export class ListadoOxigemPage implements OnInit {
   }
 
   seleccionarEquipo(equipo){
-    this.equipoSeleccionado=equipo;
-    this.mostrarSeleccionado=true;
+    this.BaseService.postJson('repartidores','recogerEquipos','otrosPendientesPorCliente',{clienteID:equipo.clienteId,equipoID:equipo.equipoId}).subscribe(res=>{
+      if(res.RESPUESTA="EXITO"){
+        if(res.DATOS){
+          equipo.otrosPendientes=res.DATOS;
+        }
+        this.equipoSeleccionado=equipo;
+        if(this.buscadorActivo){this.buscador();}
+        this.mostrarSeleccionado=true;
+      }else{
+        this.Sweetalert.modal("error","No se a cargado correctamente la info del equipo.");
+      }
+    });
   }
 
   eliminarSeleccion(index){
@@ -81,8 +94,10 @@ export class ListadoOxigemPage implements OnInit {
 
   finalizarSelecciones(ruta){
     this.DatosEquiposService.setEquipos(this.equiposSeleccionados).then((val)=>{
-      this.Router.navigateByUrl(ruta); 
-    });
+       this.Router.navigateByUrl(ruta); 
+    }).catch(e=>{
+      console.log(e);
+    })
   }
 
   mostrarListaSeleccionados(){
@@ -94,15 +109,18 @@ export class ListadoOxigemPage implements OnInit {
   }
 
   loadData(event) {
-    setTimeout(() => {
+    if(!this.buscadorActivo){
+      this.inicioItemLista=this.inicioItemLista+10;
+      this.getListadoRecoger();
+      event.target.complete();
+    }
+    /* setTimeout(() => {
       console.log('Done'); 
       event.target.complete();
        if (this.listado.length == 1000) {
         event.target.disabled = true;
       } 
-      
-
-    }, 500);
+    }, 500); */
     
   }
 
@@ -122,10 +140,6 @@ export class ListadoOxigemPage implements OnInit {
       this.buscar=true;
       this.buscarAnimacion=true;
     }
-  }
-
-  buscando(){
-
   }
 
   getListadoEntregar(){
@@ -150,10 +164,10 @@ export class ListadoOxigemPage implements OnInit {
 
   getListadoRecoger(){
     /* alert('cargar recoger'); */
-     this.BaseService.postJson('repartidores','movimientosEquipos','mostrarRecogidosAPI').subscribe(res=>{
+     this.BaseService.postJson('repartidores','recogerEquipos','listaPendientesPaginado',{inicioEquiposRecoger:this.inicioItemLista,mostrarEquiposRecoger: this.cantidadItemLista }).subscribe(res=>{
        if (res.RESPUESTA="EXITO") {
         if (res.DATOS) {
-          this.listadoTodos=res.DATOS;
+          this.listadoTodos=[].concat(this.listadoTodos,res.DATOS);
           this.listado=this.listadoTodos;
           this.listadoFilter=this.listadoTodos;
           console.log(this.listadoTodos);
@@ -163,7 +177,6 @@ export class ListadoOxigemPage implements OnInit {
        }else{
          this.Sweetalert.modal("error",res.mensaje);
        }
-      
      });
     
   }
@@ -178,13 +191,23 @@ export class ListadoOxigemPage implements OnInit {
   }
 
   ChangeSearchbar(value){
-    let val=value;
-    console.log(val);
-     if (val && val.trim() !== '') {
-      this.listado = this.listadoFilter.filter((item) => {
-          return (item.personaRazonSocial.toString().toLowerCase().indexOf(val.toString().toLowerCase()) > -1);
-      })
-    } else{
+     let val=value;
+     if (val && val.trim() !== '' && val.length>3 ) {
+       this.buscadorActivo=true;
+      this.BaseService.postJson('repartidores','recogerEquipos','buscarEquipos',{datoBusqueda:value}).subscribe(res=>{
+        if (res.RESPUESTA="EXITO") {
+         if (res.DATOS) {
+           this.listado=res.DATOS;
+         }else{
+          this.listado=[];
+           this.Sweetalert.notificacion("info","No se encontraron equipos.");
+         }
+        }else{
+          this.Sweetalert.modal("error",res.mensaje);
+        }
+      });
+    }else{
+      this.buscadorActivo=false;
       this.listado=this.listadoTodos;
     }
   }

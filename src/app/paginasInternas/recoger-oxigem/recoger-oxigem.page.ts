@@ -32,7 +32,6 @@ export class RecogerOxigemPage implements OnInit {
   }
 
   ngOnInit() {
-
     this.equipos=this.DatosEquiposService.getEquipos();
     if(this.equipos.length){
       console.log("ingresando a recoger");
@@ -151,7 +150,7 @@ export class RecogerOxigemPage implements OnInit {
       };
       console.log(datos);
       let loading=this.BaseService.presentLoading();
-      this.BaseService.postJson('repartidores','movimientosEquipos',"registrarRecogidaEquipos",datos).subscribe(res=>{
+      this.BaseService.postJson('repartidores','recogerEquipos',"registrarRecogidaEquipos",datos).subscribe(res=>{
         console.log(res);
         if (res.RESPUESTA="EXITO") {
           this.DatosEquiposService.deleteEquipos();
