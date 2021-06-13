@@ -54,6 +54,12 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
       // E.g. hide the scan functionality!
     }
   }
+  ionViewDidEnter(){
+    if(!this.puedoEnsenderCamara && this.verEscaner){
+      this.startScan();
+    }
+  }
+
   ngOnInit() {
     //la accion puede ser recoger o entregar o ninguna
     this.accion=this.ActivatedRoute.snapshot.params.tipo;
@@ -181,7 +187,7 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
       }, 500);
     });
   }
-  
+
   irAlistaEquipos(){
     this.stopScan(); 
     this.Router.navigateByUrl("listado-oxigem/"+this.accion);
