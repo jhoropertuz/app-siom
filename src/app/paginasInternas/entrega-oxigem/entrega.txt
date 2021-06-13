@@ -1,0 +1,158 @@
+import { Component, OnInit , ViewChild, AfterViewInit} from '@angular/core';
+import { Validators, FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BaseService } from 'src/app/service/base.service';
+import { DatosEquiposService } from 'src/app/service/datos-equipos.service';
+import { SweetalertService } from 'src/app/service/sweetalert.service';
+import { FirmaComponent } from 'src/app/shareds/firma/firma.component';
+import { Plugins } from "@capacitor/core";
+import { AuthService } from 'src/app/service/auth.service';
+import { DatosServicioService } from 'src/app/service/datos-servicio.service';
+
+
+@Component({
+  selector: 'app-entrega-oxigemhghg',
+  templateUrl: './entrega-oxigem.pagePrueba.html'
+})
+export class EntregaPruebaOxigemPage implements OnInit {
+
+  codigo="xxxx";
+  firmaBase64;
+  Servicio;
+  equipos=[];
+  coordenadas={lat:0,lng:0};
+  formularioCompleto=false;
+  personaId="";
+  permisosFirma:boolean=false;
+  persona;
+  clientes=[];
+  referencias=[];
+  clienteID;
+  
+  constructor(public DatosServicioService:DatosServicioService,private AuthService:AuthService ,public formBuilder: FormBuilder,public DatosEquiposService: DatosEquiposService,public Router:Router,private BaseService:BaseService, public Sweetalert:SweetalertService,private ActivatedRoute: ActivatedRoute) { 
+    
+  }
+
+  ngOnInit() {
+    this.equipos=this.DatosEquiposService.getEquipos();
+    if(this.equipos.length){
+      console.log("llego equipos a entrega");
+      console.log(this.equipos);
+    }else{
+        this.Sweetalert.notificacion("info","Datos Insuficientes.")
+        this.Router.navigateByUrl("menu-principal");
+    } 
+
+    Plugins.Geolocation.getCurrentPosition().then(result => {
+      console.log(result);
+      this.coordenadas.lat = result.coords.latitude;
+      this.coordenadas.lng = result.coords.longitude; 
+    });
+
+    /* this.takePicture(); */
+
+    this.cargarClientes();
+  }
+
+  validation_messages = {
+    'personaTipoIdentificacion': [
+      { type: 'required', message: 'Tipo de identificación es requerido.' }
+    ],
+    'personaIdentificacion': [
+      { type: 'required', message: 'Identificación es requerida.' }
+    ],
+    'personaNombres': [
+      { type: 'required', message: 'Nombres es requerida.' }
+    ],
+    'personaApellidos': [
+      { type: 'required', message: 'Apellidos es requerida.' }
+    ],
+    'personaCelular': [
+      { type: 'required', message: 'Celular es requerida.' }
+    ],
+    'personaCorreoElectronico': [
+      { type: 'required', message: 'Correo es requerida.' }
+    ]
+  };
+
+  irRuta(ruta){
+    this.Router.navigateByUrl(ruta);
+  }
+
+  cargarClientes(){
+    this.BaseService.postJson('repartidores','movimientosEquipos',"clientes").subscribe(res=>{
+      if(res.RESPUESTA=="EXITO"){
+        this.clientes=res.DATOS;
+      }else{
+        this.Sweetalert.modal("info","No se encontraron clientes");
+      }
+    });
+  }
+  cargarReferencia(clienteID){
+    this.formularioCompleto=false;
+    this.referencias=[];
+    console.log(clienteID);
+    this.BaseService.postJson('repartidores','movimientosEquipos',"referenciaCliente",{clienteID:clienteID}).subscribe(res=>{
+      console.log(res);
+      if(res.RESPUESTA=="EXITO"){
+        this.referencias=res.DATOS;
+      }else{
+        this.Sweetalert.modal("info","No se encontraron clientes");
+      }
+    });
+  }
+
+  mostrarFormularioCompleto(personaID){
+    let filterPersona=this.referencias.filter(item=>{
+      if(item.personaId==personaID){
+        return item;
+      }
+    });
+    this.persona=filterPersona[0];
+    this.formularioCompleto=true;
+  }
+
+  entregar(){
+    let persona=this.persona;
+    if(this.equipos.length){
+     // let equiposID=this.equipos.map(res=>{return {equipoID:res.equipoId,clienteID:res.clienteId,clientePersona:res.clientePersona,estadoEntregaEquipo:res.estadoEntregaEquipo};});
+      let datos={
+        firmaBase64:this.firmaBase64,
+        coordenadas:this.coordenadas,
+        equipos:this.equipos,
+        persona:persona
+      };
+      console.log(datos);
+      return true;
+      if(this.permisosFirma && this.firmaBase64 ){
+        let loading=this.BaseService.presentLoading();
+        this.BaseService.postJson('repartidores','movimientosEquipos',"registrarRecogidaEquipos",datos).subscribe(res=>{
+          console.log(res);
+          if (res.RESPUESTA="EXITO") {
+            this.Sweetalert.notificacion("success","Entrega exitosa")
+            this.DatosServicioService.setRecibosServico(res.DATOS);
+            this.Router.navigateByUrl("recibos-servicios");
+          }else{
+            this.Sweetalert.modal("error",res.MENSAJE);
+          }
+          loading.then(e=>{
+            e.dismiss();});
+        });
+      }else{
+        this.Sweetalert.modal("info","Datos insuficientes para la operación.");
+      }
+    }else{
+      this.Sweetalert.modal("info","No se encontraron equipos seleccionados.");
+    }
+    
+  }
+
+  firmaBase64Event($event){
+    this.firmaBase64=$event;
+  }
+
+  permisoFirma(){
+    console.log(this.permisosFirma);
+  }
+
+}

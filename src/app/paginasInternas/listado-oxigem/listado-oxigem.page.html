@@ -50,10 +50,9 @@
                   </ion-col>  -->
                   <ion-col size="9"  >
                     
-                      <h4><strong>{{item.equipoTitulo}}</strong> </h4>
-                      <span>  SN : {{item.equipoSerial}}</span>
-                      <span> Codigo : {{item.equipoCodigo}} </span>
-                        <span>  Cliente : {{item.personaIdentificacion}} | {{item.personaRazonSocial}}</span>
+                      <h4><strong> SN : {{item.equipoSerial}}</strong><br> Código : {{item.equipoCodigo}}</h4>
+                      <span> {{item.equipoTitulo}} </span><br>
+                      <span>  Cliente : <strong>{{item.personaIdentificacion}} | {{item.personaRazonSocial}}</strong></span>
                     
                    <!--  <ion-buttons>
                       <ion-button fill="clear" size="small" disabled (click)="irRuta('detalles-usuario/'+7)"><ion-icon name="person-outline" class="ion-icon-b"></ion-icon></ion-button>
@@ -104,7 +103,7 @@
                       <strong>Fecha recogida:</strong> {{equipoSeleccionado.reciboFechaRecogida}}<br><br>
 
                       <ng-container *ngIf="equipoSeleccionado.otrosPendientes">
-                        <ion-text color="primary"><h2>Otros Pendientes Por recoger</h2></ion-text>
+                        <ion-text color="primary"><h2>Otros Pendientes</h2></ion-text>
                           <ng-container *ngFor="let otro of equipoSeleccionado.otrosPendientes" >
                             <ion-label style="border: solid red;" >
                               <strong>equipo:</strong> {{otro.equipoTitulo}}<br>

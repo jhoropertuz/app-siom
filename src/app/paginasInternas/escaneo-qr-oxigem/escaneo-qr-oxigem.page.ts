@@ -27,6 +27,9 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
   active=true;
   active1=true;
   puedoEnsenderCamara=true;
+  RECOGER=false;
+  ENTREGAR=false;
+  titulo="";
   cliente={
     clienteCodigo:"",
     personaIdentificacion:"",
@@ -56,6 +59,14 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
     this.accion=this.ActivatedRoute.snapshot.params.tipo;
     console.log(this.accion);
     this.puedoEnsenderCamara=true;
+    if(this.accion=='recoger'){
+      this.titulo="Recoger";
+      this.RECOGER=true;
+    }else{
+      this.titulo="Entregar";
+      this.ENTREGAR=true;
+    }
+    
    
   }@ViewChild('video', { static: false }) video: ElementRef;
   @ViewChild('canvas', { static: false }) canvas: ElementRef;
@@ -102,10 +113,16 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
   AceptarEscaneo(estado=null){
     this.equipoEscaneado.estadoEntregaEquipo=estado;
     this.equipos.push(this.equipoEscaneado);
-    this.verEscaner=true;
-    this.verEquipo=false;
-    this.verListaEscaneo=false;
-    this.startScan();
+
+    if(this.ENTREGAR){
+      this.finalizarEscaneo('entrega-oxigem');
+    }else{
+      this.verEscaner=true;
+      this.verEquipo=false;
+      this.verListaEscaneo=false;
+      this.startScan();
+    }
+   
   }
 
   cancelarEscaneo(){
@@ -151,15 +168,20 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
   }
 
   finalizarEscaneo(ruta){
+    let loading=this.BaseService.presentLoading();
     this.DatosEquiposService.setEquipos(this.equipos).then((val)=>{
-      console.log("saliendo de escaneo");
-      console.log(this.equipos);
-      this.stopScan(); 
-      this.Router.navigateByUrl(ruta);
+      setTimeout(() => {
+        loading.then(e=>{
+          e.dismiss();
+        });
+        console.log("saliendo de escaneo");
+        console.log(this.equipos);
+        this.stopScan(); 
+        this.Router.navigateByUrl(ruta);
+      }, 500);
     });
-    
   }
-
+  
   irAlistaEquipos(){
     this.stopScan(); 
     this.Router.navigateByUrl("listado-oxigem/"+this.accion);

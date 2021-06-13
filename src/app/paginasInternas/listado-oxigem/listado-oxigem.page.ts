@@ -28,36 +28,48 @@ export class ListadoOxigemPage implements OnInit {
   mostrarSeleccionado=false;
   active=true;
   openIndex;
+  eventCargandoLista;
+  configLista;
+  RECOGER=false;
+  ENTREGAR=false;
   constructor(public DatosEquiposService:DatosEquiposService ,public Router:Router,private ActivatedRoute: ActivatedRoute, public BaseService:BaseService,public Sweetalert:SweetalertService,private MenuController:MenuController) { }
 
   ngOnInit() {
     this.MenuController.enable(true, 'menu');
     this.listadoTipo=this.ActivatedRoute.snapshot.params.tipo;
     if(this.listadoTipo=='recoger'){
-      this.titulo="Recoger"
-      this.getListadoRecoger();
+      this.titulo="Recoger";
+      this.RECOGER=true;
+      this.configLista={
+        'operacionBusqueda': ["recogerEquipos","buscarEquipos"],
+        'operacionListado':  ["recogerEquipos","listaPendientesPaginado"],
+        'operacionOtrosPendientes':  ["entregarEquipos","otrosPendientesPorCliente"]
+      }
     }else if(this.listadoTipo=='entregar'){
-      this.titulo="Entregar"
-      this.getListadoEntregar();
+      this.titulo="Entregar";
+      this.ENTREGAR=true;
+      this.configLista={
+        'operacionBusqueda': ["entregarEquipos","buscarEquipos"],
+        'operacionListado':  ["entregarEquipos","listaPendientesPaginado"],
+        'operacionOtrosPendientes':  ["entregarEquipos","otrosPendientesPorRecibo"]
+      }
     }
+    this.getListado();
   }
  
   irRuta(ruta){
     this.Router.navigateByUrl(ruta);
   }
 
-
-  /* irAccion(data){
-    if (this.listadoTipo=='recoger') {
-      this.DatosEquiposService.setEquipos([data]);
-      this.Router.navigateByUrl('recoger-oxigem'); 
-    }
-  } */
-
   guardarSeleccion(estado=null){
     this.equipoSeleccionado.estadoEntregaEquipo=estado;
     this.equiposSeleccionados.push(this.equipoSeleccionado);
-    this.inicioLista();
+    if(this.ENTREGAR){
+      this.finalizarSelecciones('entrega-oxigem');
+
+    }else{
+      this.inicioLista();
+    }
   }
 
   cancelarSeleccion(){
@@ -70,18 +82,31 @@ export class ListadoOxigemPage implements OnInit {
   }
 
   seleccionarEquipo(equipo){
-    this.BaseService.postJson('repartidores','recogerEquipos','otrosPendientesPorCliente',{clienteID:equipo.clienteId,equipoID:equipo.equipoId}).subscribe(res=>{
-      if(res.RESPUESTA="EXITO"){
-        if(res.DATOS){
-          equipo.otrosPendientes=res.DATOS;
-        }
-        this.equipoSeleccionado=equipo;
-        if(this.buscadorActivo){this.buscador();}
-        this.mostrarSeleccionado=true;
+    equipo.otrosPendientes=[];
+      let data;
+      if(this.ENTREGAR){
+        data={reciboID:equipo.reciboId,equipoID:equipo.equipoId};
       }else{
-        this.Sweetalert.modal("error","No se a cargado correctamente la info del equipo.");
+        data={clienteID:equipo.clienteId,equipoID:equipo.equipoId};
       }
-    });
+      this.BaseService.postJson('repartidores',this.configLista.operacionOtrosPendientes[0],this.configLista.operacionOtrosPendientes[1],data).subscribe(res=>{
+          if(res.RESPUESTA="EXITO"){
+            if(res.DATOS){
+              equipo.otrosPendientes=res.DATOS;
+            }
+            this.equipoSeleccionado=equipo;
+            if(this.buscadorActivo){this.buscador();}
+            this.mostrarSeleccionado=true;
+          }else{
+            this.Sweetalert.modal("error","No se a cargado correctamente la info del equipo.");
+          }
+      });
+   /*  }else{
+      this.equipoSeleccionado=equipo;
+      if(this.buscadorActivo){this.buscador();}
+      this.mostrarSeleccionado=true;
+    } */
+   
   }
 
   eliminarSeleccion(index){
@@ -93,8 +118,15 @@ export class ListadoOxigemPage implements OnInit {
   }
 
   finalizarSelecciones(ruta){
+    let loading=this.BaseService.presentLoading();
     this.DatosEquiposService.setEquipos(this.equiposSeleccionados).then((val)=>{
-       this.Router.navigateByUrl(ruta); 
+      setTimeout(() => {
+        loading.then(e=>{
+          e.dismiss();
+        });
+        this.reiniciarSeleccionados();
+        this.Router.navigateByUrl(ruta);
+      }, 500);
     }).catch(e=>{
       console.log(e);
     })
@@ -111,8 +143,11 @@ export class ListadoOxigemPage implements OnInit {
   loadData(event) {
     if(!this.buscadorActivo){
       this.inicioItemLista=this.inicioItemLista+10;
-      this.getListadoRecoger();
-      event.target.complete();
+      this.eventCargandoLista=event;
+      if (this.listado.length<10) {
+        this.eventCargandoLista.target.disabled = true;
+      } 
+      this.getListado();
     }
     /* setTimeout(() => {
       console.log('Done'); 
@@ -142,49 +177,36 @@ export class ListadoOxigemPage implements OnInit {
     }
   }
 
-  getListadoEntregar(){
-    /* alert('cargar recoger'); */
-     this.BaseService.postJson('repartidores','movimientosEquipos','mostrarEntregadosAPI').subscribe(res=>{
-       if (res.RESPUESTA="EXITO") {
-        if (res.DATOS) {
-          this.listadoTodos=res.DATOS;
-          this.listado=this.listadoTodos;
-          this.listadoFilter=this.listadoTodos;
-          console.log(this.listadoTodos);
-        }else{
-          this.Sweetalert.notificacion("info","No se encontraron servicios.");
-        }
+  getListado(){
+    this.BaseService.postJson('repartidores',this.configLista.operacionListado[0],this.configLista.operacionListado[1],{inicioEquiposRecoger:this.inicioItemLista,mostrarEquiposRecoger: this.cantidadItemLista }).subscribe(res=>{
+      if (res.RESPUESTA="EXITO") {
+       if (res.DATOS) {
+         this.listadoTodos=[].concat(this.listadoTodos,res.DATOS);
+         this.listado=this.listadoTodos;
+         this.listadoFilter=this.listadoTodos;
+         console.log(this.listadoTodos);
        }else{
-         this.Sweetalert.modal("error",res.mensaje);
+         this.Sweetalert.notificacion("info","No se encontraron servicios.");
        }
-      
-     });
-    
+      }else{
+        this.Sweetalert.modal("error",res.mensaje);
+      }
+      if(this.eventCargandoLista){
+        this.eventCargandoLista.target.complete();
+      }
+    });
   }
 
-  getListadoRecoger(){
-    /* alert('cargar recoger'); */
-     this.BaseService.postJson('repartidores','recogerEquipos','listaPendientesPaginado',{inicioEquiposRecoger:this.inicioItemLista,mostrarEquiposRecoger: this.cantidadItemLista }).subscribe(res=>{
-       if (res.RESPUESTA="EXITO") {
-        if (res.DATOS) {
-          this.listadoTodos=[].concat(this.listadoTodos,res.DATOS);
-          this.listado=this.listadoTodos;
-          this.listadoFilter=this.listadoTodos;
-          console.log(this.listadoTodos);
-        }else{
-          this.Sweetalert.notificacion("info","No se encontraron servicios.");
-        }
-       }else{
-         this.Sweetalert.modal("error",res.mensaje);
-       }
-     });
-    
+  reiniciar(){
+    this.listadoTodos=[];
+    this.listado=[];
+    this.listadoFilter=[];
   }
-
- 
 
   doRefresh(event)  {
-    this.getListadoRecoger();
+    this.inicioItemLista=0;
+    this.reiniciar();
+    this.getListado();
     setTimeout(() => {
       event.target.complete();
     }, 1000);
@@ -194,7 +216,7 @@ export class ListadoOxigemPage implements OnInit {
      let val=value;
      if (val && val.trim() !== '' && val.length>3 ) {
        this.buscadorActivo=true;
-      this.BaseService.postJson('repartidores','recogerEquipos','buscarEquipos',{datoBusqueda:value}).subscribe(res=>{
+      this.BaseService.postJson('repartidores',this.configLista.operacionBusqueda[0],this.configLista.operacionBusqueda[1],{datoBusqueda:value}).subscribe(res=>{
         if (res.RESPUESTA="EXITO") {
          if (res.DATOS) {
            this.listado=res.DATOS;

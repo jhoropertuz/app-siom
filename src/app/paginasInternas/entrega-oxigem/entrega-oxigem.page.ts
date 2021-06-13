@@ -17,32 +17,45 @@ import { DatosServicioService } from 'src/app/service/datos-servicio.service';
 })
 export class EntregaOxigemPage implements OnInit {
 
-  codigo="xxxx";
+ codigo="xxxx";
   firmaBase64;
   Servicio;
-  equipos=[];
+  equipos;
   coordenadas={lat:0,lng:0};
+  form_persona_entrega;
+  form_registrar_persona_entrega;
+  registrarPersona=false;
   formularioCompleto=false;
   personaId="";
   permisosFirma:boolean=false;
-  persona;
-  clientes=[];
-  referencias=[];
-  clienteID;
-  
-  constructor(public DatosServicioService:DatosServicioService,private AuthService:AuthService ,public formBuilder: FormBuilder,public DatosEquiposService: DatosEquiposService,public Router:Router,private BaseService:BaseService, public Sweetalert:SweetalertService,private ActivatedRoute: ActivatedRoute) { 
-    
-  }
+  constructor(public DatosServicioService:DatosServicioService,private AuthService:AuthService ,public formBuilder: FormBuilder,public DatosEquiposService: DatosEquiposService,public Router:Router,private BaseService:BaseService, public Sweetalert:SweetalertService,private ActivatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
     this.equipos=this.DatosEquiposService.getEquipos();
     if(this.equipos.length){
-      console.log("llego equipos a entrega");
+      if(this.equipos[0].otrosPendientes){
+        this.equipos[0].otrosPendientes.forEach(equipo => {
+          this.equipos.push(equipo);
+        });
+      }
+      console.log("ingresando a recoger");
       console.log(this.equipos);
     }else{
         this.Sweetalert.notificacion("info","Datos Insuficientes.")
         this.Router.navigateByUrl("menu-principal");
-    } 
+    }
+
+    this.form_persona_entrega = this.formBuilder.group({
+      personaTipoIdentificacion: new FormControl('1', Validators.compose([Validators.required])),
+      personaIdentificacion: new FormControl('', Validators.compose([Validators.required]))
+    });
+
+    this.form_registrar_persona_entrega = this.formBuilder.group({
+      personaNombres: new FormControl('', Validators.compose([Validators.required])),
+      personaApellidos: new FormControl('', Validators.compose([Validators.required])),
+      personaCelular: new FormControl('', Validators.compose([Validators.required])),
+      personaCorreoElectronico: new FormControl('', Validators.compose([Validators.required]))
+    });
 
     Plugins.Geolocation.getCurrentPosition().then(result => {
       console.log(result);
@@ -52,7 +65,11 @@ export class EntregaOxigemPage implements OnInit {
 
     /* this.takePicture(); */
 
-    this.cargarClientes();
+    this.form_persona_entrega.get("personaIdentificacion").valueChanges.subscribe(x => {
+      this.registrarPersona=false;
+      this.formularioCompleto=false;
+   });
+
   }
 
   validation_messages = {
@@ -75,76 +92,86 @@ export class EntregaOxigemPage implements OnInit {
       { type: 'required', message: 'Correo es requerida.' }
     ]
   };
-
+  
   irRuta(ruta){
     this.Router.navigateByUrl(ruta);
   }
-
-  cargarClientes(){
-    this.BaseService.postJson('repartidores','movimientosEquipos',"clientes").subscribe(res=>{
-      if(res.RESPUESTA=="EXITO"){
-        this.clientes=res.DATOS;
-      }else{
-        this.Sweetalert.modal("info","No se encontraron clientes");
-      }
-    });
-  }
-  cargarReferencia(clienteID){
+  buscarPersona(value){
+    this.registrarPersona=false;
     this.formularioCompleto=false;
-    this.referencias=[];
-    console.log(clienteID);
-    this.BaseService.postJson('repartidores','movimientosEquipos',"referenciaCliente",{clienteID:clienteID}).subscribe(res=>{
+    let loading=this.BaseService.presentLoading();
+    this.BaseService.postJson('personas','directorio',"validarExistenciaPersonaApi",value).subscribe(res=>{
       console.log(res);
-      if(res.RESPUESTA=="EXITO"){
-        this.referencias=res.DATOS;
+      if (res.RESPUESTA=="EXITO") {
+        this.formularioCompleto=true;
+        this.registrarPersona=true;
+        this.personaId=res.DATOS.personaId;
+        this.form_registrar_persona_entrega.controls['personaNombres'].setValue(res.DATOS.personaNombres);
+        this.form_registrar_persona_entrega.controls['personaApellidos'].setValue(res.DATOS.personaApellidos);
+        this.form_registrar_persona_entrega.controls['personaCelular'].setValue(res.DATOS.personaCelular);
+        this.form_registrar_persona_entrega.controls['personaCorreoElectronico'].setValue(res.DATOS.personaCorreoElectronico);
+      }else if(res.RESPUESTA=="INFO"){
+        this.formularioCompleto=true;
+        this.registrarPersona=true;
+        this.personaId="";
+        this.form_registrar_persona_entrega.controls['personaNombres'].setValue("");
+        this.form_registrar_persona_entrega.controls['personaApellidos'].setValue("");
+        this.form_registrar_persona_entrega.controls['personaCelular'].setValue("");
+        this.form_registrar_persona_entrega.controls['personaCorreoElectronico'].setValue("");
       }else{
-        this.Sweetalert.modal("info","No se encontraron clientes");
+        this.Sweetalert.modal("error",res.MENSAJE);
+        this.personaId="";
       }
+      loading.then(e=>{
+        e.dismiss();});
     });
   }
 
-  mostrarFormularioCompleto(personaID){
-    let filterPersona=this.referencias.filter(item=>{
-      if(item.personaId==personaID){
-        return item;
-      }
+  async takePicture () {
+    let image = await Plugins.Camera.getPhoto({
+      quality: 90,
+      allowEditing: true,
+      resultType: Plugins.CameraResultType.Uri
     });
-    this.persona=filterPersona[0];
-    this.formularioCompleto=true;
+   /*  alert("ok"); */
+    let  imageUrl = image.webPath;
+    console.log(image);
   }
+
+
 
   entregar(){
-    let persona=this.persona;
-    if(this.equipos.length){
-     // let equiposID=this.equipos.map(res=>{return {equipoID:res.equipoId,clienteID:res.clienteId,clientePersona:res.clientePersona,estadoEntregaEquipo:res.estadoEntregaEquipo};});
+    if(this.permisosFirma && this.firmaBase64 && this.equipos.length>0){
+      let persona=Object.assign(this.form_registrar_persona_entrega.value, this.form_persona_entrega.value);
+      persona.personaId=this.personaId;
+      let reciboID=this.equipos[0].reciboId;
+      let equiposID=this.equipos.map(res=>{return {equipoID:res.equipoId,clienteID:res.clienteId,clientePersona:res.clientePersona,estadoEntregaEquipo:res.estadoEntregaEquipo};});
       let datos={
+        reciboID:reciboID,
         firmaBase64:this.firmaBase64,
         coordenadas:this.coordenadas,
-        equipos:this.equipos,
+        equipos:equiposID,
         persona:persona
       };
       console.log(datos);
-      return true;
-      if(this.permisosFirma && this.firmaBase64 ){
-        let loading=this.BaseService.presentLoading();
-        this.BaseService.postJson('repartidores','movimientosEquipos',"registrarRecogidaEquipos",datos).subscribe(res=>{
-          console.log(res);
-          if (res.RESPUESTA="EXITO") {
-            this.Sweetalert.notificacion("success","Entrega exitosa")
-            this.DatosServicioService.setRecibosServico(res.DATOS);
-            this.Router.navigateByUrl("recibos-servicios");
-          }else{
-            this.Sweetalert.modal("error",res.MENSAJE);
-          }
-          loading.then(e=>{
-            e.dismiss();});
-        });
-      }else{
-        this.Sweetalert.modal("info","Datos insuficientes para la operación.");
-      }
+      let loading=this.BaseService.presentLoading();
+      this.BaseService.postJson('repartidores','entregarEquipos',"registrarEntregaEquiposPorRecibo",datos).subscribe(res=>{
+        console.log(res);
+        if (res.RESPUESTA="EXITO") {
+          this.DatosEquiposService.deleteEquipos();
+          this.Sweetalert.notificacion("success","Recolección exitosa")
+          this.DatosServicioService.setRecibosServico(res.DATOS);
+          this.Router.navigateByUrl("recibos-servicios");
+        }else{
+          this.Sweetalert.modal("error",res.MENSAJE);
+        }
+        loading.then(e=>{
+          e.dismiss();});
+      });
     }else{
-      this.Sweetalert.modal("info","No se encontraron equipos seleccionados.");
+      this.Sweetalert.modal("info","Datos insuficientes para la operación.");
     }
+    
     
   }
 
@@ -155,5 +182,4 @@ export class EntregaOxigemPage implements OnInit {
   permisoFirma(){
     console.log(this.permisosFirma);
   }
-
 }
