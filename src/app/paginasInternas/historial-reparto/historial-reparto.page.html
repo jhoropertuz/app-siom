@@ -1,0 +1,105 @@
+
+<ion-header class="ion-no-border"  >
+  <ion-toolbar>
+    <ion-title>Historial</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button icon="chevron-back" ></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end" >
+     <!--  <ion-button *ngIf="!mostrarSeleccionados && !mostrarSeleccionado" (click)="buscador()" size="small" >
+        <ion-icon *ngIf="buscar" name="search-circle"></ion-icon>
+        <ion-icon *ngIf="!buscar" name="search"></ion-icon>
+      </ion-button> -->
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <ion-searchbar color="primary" placeholder="Buscar" style="margin-bottom: 40%;"  (ionChange)="ChangeSearchbar($event.target.value)" autocomplete="On" style="position:fixed; z-index: 100;" *ngIf="buscar" [ngClass]="{'animate__backInRight': buscarAnimacion, 'animate__backOutRight': !buscarAnimacion }" class="animate__animated  " ></ion-searchbar>
+ 
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+    <div class="ion-padding">
+        <ion-row *ngIf="!mostrarSeleccionado" >
+          <ion-col  *ngFor="let item of listado" size-lg="6"  size="12">
+            <ion-item lines="none" style="margin: 2px;" class="animate__animated animate__fadeInUpBig">
+              <ion-grid>
+                <ion-row class="ion-align-items-center">
+                  <ion-col size="9"  >
+                      <h4><strong> Servicio : {{item.reciboServicio}}</strong></h4>
+                      <span>Estado : {{item.reciboEstadoReparto}} </span><br>
+                      <span>Cliente : <strong>{{item.personaIdentificacion}} | {{item.personaRazonSocial}}</strong></span>
+                  </ion-col>
+                  <ion-col class="text-right" size="3" >
+                    <ion-button fill="clear" size="large" (click)="seleccionarEquipo(item)" ><ion-icon name="chevron-forward" slot="end" class="ion-icon-a"></ion-icon></ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-item>
+          </ion-col>
+          <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+            <ion-infinite-scroll-content
+              loadingSpinner="bubbles"
+              loadingText="Cargando...">
+          </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+        </ion-row>
+        <ion-row *ngIf="mostrarSeleccionado" >
+          <ion-col size="12">
+            <ion-item lines="none" style="margin: 2px;" class="animate__animated animate__fadeInUpBig">
+              <ion-grid>
+                <ion-row class="ion-align-items-center">
+                  <ion-col size="12" style="margin-bottom: 5%;">
+                    <ion-label >
+                      <ion-button  color="primary" (click)="cancelarSeleccion()">Listado</ion-button>
+                    </ion-label>
+                  </ion-col> 
+                  <ion-col size="12">
+                    <ion-label class="ion-text-wrap text-center">   
+                      <ion-text color="primary"><h2>Cliente</h2></ion-text>
+                      <strong>Nombre:</strong> {{equipoSeleccionado.personaRazonSocial}}<br>
+                      <strong>CC:</strong> {{equipoSeleccionado.personaIdentificacion}}<br>
+                      <strong>Codigo Cliente:</strong> {{equipoSeleccionado.clienteCodigo}}<br>
+                      <strong>Correo:</strong> {{equipoSeleccionado.personaCorreoElectronico}}<br><br>
+                      <ion-text color="primary"><h2>Recibo</h2></ion-text>
+                      <strong>Numero:</strong> {{equipoSeleccionado.reciboNumero}}<br>
+                      <strong>Servicio:</strong> {{equipoSeleccionado.reciboServicio}}<br>
+                      <strong>Fecha Servicio:</strong> {{equipoSeleccionado.reciboFechaServicio}}<br>
+                      <strong>Fecha recogida:</strong> {{equipoSeleccionado.reciboFechaRecogida}}<br><br>
+
+                      <ion-item lines="none" style="margin: 2px;" class="animate__animated animate__fadeInUpBig">
+                        <ion-grid>
+                          <ion-row class="ion-align-items-center">
+                            <ion-col size="4">
+                              <img src="https://siom.oximeiser.com/libs/media/PDF-logo.png" alt="iconPDF" style="width: 100%;">
+                           </ion-col>
+                           <ion-col size="8">
+                             <ion-label >
+                               <strong>{{equipoSeleccionado.documentoTITULO}}</strong><br>
+                               <a ion-button size="small"  href="{{equipoSeleccionado.documentoURL}}" download="{{equipoSeleccionado.servicioCODIGO}}.pdf" target="_blank"> Decargar recibo de Servicio {{equipoSeleccionado.servicioCODIGO}}</a>
+                             </ion-label>
+                           </ion-col>
+                          </ion-row>
+                        </ion-grid>
+                      </ion-item>
+
+                      <!-- <ng-container *ngIf="equipoSeleccionado.otrosPendientes">
+                        <ion-text color="primary"><h2>Equipos</h2></ion-text>
+                          <ng-container *ngFor="let otro of equipoSeleccionado.otrosPendientes" >
+                            <ion-label style="border: solid red;" >
+                              <strong>equipo:</strong> {{otro.equipoTitulo}}<br>
+                              <strong>Codigo:</strong> {{otro.equipoCodigo}}<br>
+                            </ion-label>
+                          </ng-container>
+                      </ng-container> -->
+                    </ion-label>
+                  </ion-col> 
+                </ion-row>
+              </ion-grid>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+</div>
+</ion-content>
+
+

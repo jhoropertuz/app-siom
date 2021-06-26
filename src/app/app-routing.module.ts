@@ -48,7 +48,13 @@ const routes: Routes = [
     path: 'recibos-servicios',
     canActivate: [AuthGuard],
     loadChildren: () => import('./paginasInternas/recibos-servicios/recibos-servicios.module').then( m => m.RecibosServiciosPageModule)
+  },
+  {
+    path: 'historial-reparto',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./paginasInternas/historial-reparto/historial-reparto.module').then( m => m.HistorialRepartoPageModule)
   }
+
 ];
 
 @NgModule({
