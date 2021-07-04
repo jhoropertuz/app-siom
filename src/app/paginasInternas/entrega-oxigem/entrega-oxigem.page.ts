@@ -145,7 +145,7 @@ export class EntregaOxigemPage implements OnInit {
       let persona=Object.assign(this.form_registrar_persona_entrega.value, this.form_persona_entrega.value);
       persona.personaId=this.personaId;
       let reciboID=this.equipos[0].reciboId;
-      let equiposID=this.equipos.map(res=>{return {equipoID:res.equipoId,clienteID:res.clienteId,clientePersona:res.clientePersona,estadoEntregaEquipo:res.estadoEntregaEquipo};});
+      let equiposID=this.equipos.map(res=>{return {equipoID:res.equipoId,clienteID:res.clienteId,clientePersona:res.clientePersona,estadoEntregaEquipo:res.estadoEntregaEquipo,reciboReferencia:res.reciboReferencia};});
       let datos={
         reciboID:reciboID,
         firmaBase64:this.firmaBase64,

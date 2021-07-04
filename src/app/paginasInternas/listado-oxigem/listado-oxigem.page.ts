@@ -43,7 +43,7 @@ export class ListadoOxigemPage implements OnInit {
       this.configLista={
         'operacionBusqueda': ["recogerEquipos","buscarEquipos"],
         'operacionListado':  ["recogerEquipos","listaPendientesPaginado"],
-        'operacionOtrosPendientes':  ["entregarEquipos","otrosPendientesPorCliente"]
+        'operacionOtrosPendientes':  ["recogerEquipos","otrosPendientesPorCliente"]
       }
     }else if(this.listadoTipo=='entregar'){
       this.titulo="Entregar";

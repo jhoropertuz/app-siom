@@ -22,11 +22,11 @@
     <div class="ion-padding">
         <ion-row *ngIf="!mostrarSeleccionado" >
           <ion-col  *ngFor="let item of listado" size-lg="6"  size="12">
-            <ion-item lines="none" style="margin: 2px;" class="animate__animated animate__fadeInUpBig">
-              <ion-grid>
+            <ion-item lines="none" style="margin: 2px;"  [ngClass]="{'ENREPARTO': 'EN REPARTO'== item.reciboEstadoReparto}"  class="animate__animated animate__fadeInUpBig  {{item.reciboEstadoReparto}}">
+              <ion-grid >
                 <ion-row class="ion-align-items-center">
                   <ion-col size="9"  >
-                      <h4><strong> Servicio : {{item.reciboServicio}}</strong></h4>
+                      <h4><strong> Servicio : {{item.reciboNumero}}</strong></h4>
                       <span>Estado : {{item.reciboEstadoReparto}} </span><br>
                       <span>Cliente : <strong>{{item.personaIdentificacion}} | {{item.personaRazonSocial}}</strong></span>
                   </ion-col>

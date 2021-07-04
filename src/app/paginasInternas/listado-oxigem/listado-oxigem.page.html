@@ -53,6 +53,7 @@
                       <h4><strong> SN : {{item.equipoSerial}}</strong><br> Código : {{item.equipoCodigo}}</h4>
                       <span> {{item.equipoTitulo}} </span><br>
                       <span>  Cliente : <strong>{{item.personaIdentificacion}} | {{item.personaRazonSocial}}</strong></span>
+                      <span *ngIf="item.referenciaIdentificacion" > <br> Refe :  <strong>{{item.referenciaIdentificacion}} | {{item.referenciaRazonSocial}}</strong> </span>
                     
                    <!--  <ion-buttons>
                       <ion-button fill="clear" size="small" disabled (click)="irRuta('detalles-usuario/'+7)"><ion-icon name="person-outline" class="ion-icon-b"></ion-icon></ion-button>
@@ -95,7 +96,10 @@
                       <strong>Nombre:</strong> {{equipoSeleccionado.personaRazonSocial}}<br>
                       <strong>CC:</strong> {{equipoSeleccionado.personaIdentificacion}}<br>
                       <strong>Codigo Cliente:</strong> {{equipoSeleccionado.clienteCodigo}}<br>
-                      <strong>Correo:</strong> {{equipoSeleccionado.personaCorreoElectronico}}<br><br>
+                      <strong>Correo:</strong> {{equipoSeleccionado.personaCorreoElectronico}}<br>
+                      <span  *ngIf="equipoSeleccionado.referenciaIdentificacion"><strong> Referencia :  </strong> <br> {{equipoSeleccionado.referenciaIdentificacion}} | {{equipoSeleccionado.referenciaRazonSocial}} </span>
+
+                      <br><br>
                       <ion-text color="primary"><h2>Recibo</h2></ion-text>
                       <strong>Numero:</strong> {{equipoSeleccionado.reciboNumero}}<br>
                       <strong>Servicio:</strong> {{equipoSeleccionado.reciboServicio}}<br>

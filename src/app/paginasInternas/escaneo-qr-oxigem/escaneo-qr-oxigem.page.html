@@ -84,10 +84,10 @@
                 <strong>Fecha Servicio:</strong> {{equipoEscaneado.reciboFechaServicio}}<br>
                 <strong>Fecha recogida:</strong> {{equipoEscaneado.reciboFechaRecogida}}<br>
                 <br><br>
-                <ion-button color="success" *ngIf="accion=='recoger'" size="small" slot="end" (click)="AceptarEscaneo('buen_estado')">Buen estado</ion-button>
-                <ion-button color="warning" *ngIf="accion=='recoger'" size="small" slot="end" (click)="AceptarEscaneo('perdido')">Perdido</ion-button>
-                <ion-button color="primary" *ngIf="accion=='recoger'" size="small" slot="end" (click)="AceptarEscaneo('devuelto')">Devuelto</ion-button>
-                <ion-button  *ngIf="accion=='entregar'" color="success" size="small" slot="end" (click)="AceptarEscaneo()">Aceptar</ion-button>
+                <ion-button color="success" *ngIf="accion=='recoger'&& BOTON_RECOGER" size="small" slot="end" (click)="AceptarEscaneo('buen_estado')">Buen estado</ion-button>
+                <ion-button color="warning" *ngIf="accion=='recoger' && BOTON_RECOGER" size="small" slot="end" (click)="AceptarEscaneo('perdido')">Perdido</ion-button>
+                <ion-button color="primary" *ngIf="accion=='recoger' && BOTON_RECOGER" size="small" slot="end" (click)="AceptarEscaneo('devuelto')">Devuelto</ion-button>
+                <ion-button  *ngIf="accion=='entregar' && BOTON_ENTREGAR" color="success" size="small" slot="end" (click)="AceptarEscaneo()">Aceptar</ion-button>
               </ion-label>
             </ion-col>
           </ion-row>

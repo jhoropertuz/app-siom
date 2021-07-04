@@ -29,6 +29,10 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
   puedoEnsenderCamara=true;
   RECOGER=false;
   ENTREGAR=false;
+  ESTADOS_ENTREGA=['PENDIENTE','EN REPARTO'];
+  ESTADOS_RECOGER=['ENTREGADO'];
+  BOTON_ENTREGAR=false;
+  BOTON_RECOGER=false;
   titulo="";
   cliente={
     clienteCodigo:"",
@@ -102,6 +106,7 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
       if(res.RESPUESTA="EXITO"){
         if(res.DATOS!= null && res.DATOS.length>0){
           this.equipoEscaneado=res.DATOS[0];
+          this.accionEquipoEscaniado(this.equipoEscaneado);
           this.stopScan();
           this.verEscaner=false;
           this.verListaEscaneo=false;
@@ -114,6 +119,29 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
         this.SweetalertService.modal("error",res.MENSAJE);
       }
     });
+  }
+
+  accionEquipoEscaniado(equipo){
+    this.BOTON_RECOGER=false;
+    this.BOTON_ENTREGAR=false;
+    
+    if(this.ENTREGAR){
+      if(this.ESTADOS_ENTREGA.indexOf(equipo.reciboEstadoReparto) != -1){
+        this.BOTON_ENTREGAR=true;
+      }else{
+        this.SweetalertService.notificacion("info","El equipo no esta aptopara entrega.");
+      }
+    }else{
+      if(this.ESTADOS_RECOGER.indexOf(equipo.reciboEstadoReparto) != -1 && this.RECOGER){
+        this.BOTON_RECOGER=true;
+      }else{
+        this.SweetalertService.notificacion("info","El equipo no esta aptopara recoger.");
+      }
+    }
+    
+
+    
+
   }
 
   AceptarEscaneo(estado=null){

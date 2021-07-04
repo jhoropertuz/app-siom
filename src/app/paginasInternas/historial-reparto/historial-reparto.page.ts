@@ -25,6 +25,15 @@ export class HistorialRepartoPage implements OnInit {
   equipoSeleccionado;
   mostrarSeleccionado=false;
   eventCargandoLista;
+
+  COLORES_ESTADOS={
+    "ENSERVICIO":"#6AD64D",
+    "RECOGIDO": "#6AE4FC",
+    "PERDIDA": "#FC588F",
+    "NOFUNCIONO" : "#FC588F",
+    "PORENTREGAR" : "#F90244",
+    "ENREPARTO" : "#F99C2A"
+  }
   constructor(public DatosEquiposService:DatosEquiposService ,public Router:Router,private ActivatedRoute: ActivatedRoute, public BaseService:BaseService,public Sweetalert:SweetalertService,private MenuController:MenuController) { }
 
   ngOnInit() {

@@ -141,7 +141,7 @@ export class RecogerOxigemPage implements OnInit {
     if(this.permisosFirma && this.firmaBase64 && this.equipos.length>0){
       let persona=Object.assign(this.form_registrar_persona.value, this.form_persona.value);
       persona.personaId=this.personaId;
-      let equiposID=this.equipos.map(res=>{return {equipoID:res.equipoId,clienteID:res.clienteId,clientePersona:res.clientePersona,estadoEntregaEquipo:res.estadoEntregaEquipo};});
+      let equiposID=this.equipos.map(res=>{return {equipoID:res.equipoId,clienteID:res.clienteId,clientePersona:res.clientePersona,estadoEntregaEquipo:res.estadoEntregaEquipo,reciboReferencia:res.reciboReferencia};});
       let datos={
         firmaBase64:this.firmaBase64,
         coordenadas:this.coordenadas,
