@@ -1,13 +1,8 @@
 {
-  "appId": "io.ionic.starter",
-  "appName": "OXIGEM_IONIC",
+  "appId": "com.yoursite.oximed",
+  "appName": "Oximed",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "www",
-  "plugins": {
-    "SplashScreen": {
-      "launchShowDuration": 0
-    }
-  },
   "cordova": {}
 }

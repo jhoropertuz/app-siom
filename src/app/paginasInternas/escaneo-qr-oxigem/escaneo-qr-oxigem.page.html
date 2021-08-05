@@ -82,7 +82,18 @@
                 <strong>Numero:</strong> {{equipoEscaneado.reciboNumero}}<br>
                 <strong>Servicio:</strong> {{equipoEscaneado.reciboServicio}}<br>
                 <strong>Fecha Servicio:</strong> {{equipoEscaneado.reciboFechaServicio}}<br>
-                <strong>Fecha recogida:</strong> {{equipoEscaneado.reciboFechaRecogida}}<br>
+                <strong>Fecha recogida:</strong> {{equipoEscaneado.reciboFechaRecogida}}<br><br>
+
+                <ng-container *ngIf="equipoEscaneado.otrosPendientes">
+                  <ion-text color="primary"><h2>Otros Pendientes</h2></ion-text>
+                    <ng-container *ngFor="let otro of equipoEscaneado.otrosPendientes" >
+                      <ion-label style="border: solid red;" >
+                        <strong>equipo:</strong> {{otro.equipoTitulo}}<br>
+                        <strong>Codigo:</strong> {{otro.equipoCodigo}}<br>
+                      </ion-label>
+                    </ng-container>
+                </ng-container>
+
                 <br><br>
                 <ion-button color="success" *ngIf="accion=='recoger'&& BOTON_RECOGER" size="small" slot="end" (click)="AceptarEscaneo('buen_estado')">Buen estado</ion-button>
                 <ion-button color="warning" *ngIf="accion=='recoger' && BOTON_RECOGER" size="small" slot="end" (click)="AceptarEscaneo('perdido')">Perdido</ion-button>

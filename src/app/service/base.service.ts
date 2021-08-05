@@ -8,7 +8,7 @@ import { AuthService } from './auth.service';
   providedIn: 'root'
 })
 export class BaseService {
-
+  private TOKEN = "05a5cf06982ba7892ed2a6d38fe832d6";
   headers =  new HttpHeaders({
     'Content-Type': 'aplication/json',
     'Access-Control-Allow-Origin': '*',
@@ -37,6 +37,7 @@ export class BaseService {
     Data.controlador=controlador;
     Data.accion=operacion;
     Data.authUsuarioID=this.AuthService.getUsuario().usuarioId;
+    Data.token=this.TOKEN;
     return this.http.post<any>(Endpoind.API_BASE,Data);
   }
 
@@ -48,6 +49,7 @@ export class BaseService {
     Data.componente=componente;
     Data.controlador=controlador;
     Data.accion=operacion;
+    Data.token=this.TOKEN;
     return this.http.post<any>(Endpoind.API_BASE,Data);
   }
 

@@ -33,6 +33,7 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
   ESTADOS_RECOGER=['ENTREGADO'];
   BOTON_ENTREGAR=false;
   BOTON_RECOGER=false;
+  rutaOtrosEquipos;
   titulo="";
   cliente={
     clienteCodigo:"",
@@ -71,9 +72,11 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
     this.puedoEnsenderCamara=true;
     if(this.accion=='recoger'){
       this.titulo="Recoger";
+      this.rutaOtrosEquipos= ["recogerEquipos","otrosPendientesPorCliente"];
       this.RECOGER=true;
     }else{
       this.titulo="Entregar";
+      this.rutaOtrosEquipos=["entregarEquipos","otrosPendientesPorRecibo"];
       this.ENTREGAR=true;
     }
     
@@ -102,17 +105,32 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
 
   buscarEquipo(serial){
     this.BaseService.postJson("productos","equipos","buscarPorSerialEnServicioAPI",{equipoSerial:serial}).subscribe(res=>{
-      console.log(res);
+      
       if(res.RESPUESTA="EXITO"){
         if(res.DATOS!= null && res.DATOS.length>0){
           this.equipoEscaneado=res.DATOS[0];
-          this.accionEquipoEscaniado(this.equipoEscaneado);
-          this.stopScan();
-          this.verEscaner=false;
-          this.verListaEscaneo=false;
-          this.verEquipo=true;
+          let data;
+          if(this.ENTREGAR){
+            data={reciboID:this.equipoEscaneado.reciboId,equipoID:this.equipoEscaneado.equipoId};
+          }else{
+            data={clienteID:this.equipoEscaneado.clienteId,equipoID:this.equipoEscaneado.equipoId};
+          }
+          this.BaseService.postJson('repartidores',this.rutaOtrosEquipos[0],this.rutaOtrosEquipos[1],data).subscribe(res=>{
+            if(res.RESPUESTA="EXITO"){
+              if(res.DATOS){
+                this.equipoEscaneado.otrosPendientes=res.DATOS;
+              }
+              this.accionEquipoEscaniado(this.equipoEscaneado);
+              this.stopScan();
+              this.verEscaner=false;
+              this.verListaEscaneo=false;
+              this.verEquipo=true;
+            }else{
+              this.SweetalertService.modal("error","No se a cargado correctamente la info del equipo.");
+            }
+          });
         }else{
-          this.SweetalertService.notificacion("info","No se encontro el elemento.");
+          this.SweetalertService.notificacion("info","No se encontro el equipo.");
           this.startScan();
         }
       }else{
@@ -129,13 +147,13 @@ export class EscaneoQrOxigemPage implements OnInit , OnDestroy {
       if(this.ESTADOS_ENTREGA.indexOf(equipo.reciboEstadoReparto) != -1){
         this.BOTON_ENTREGAR=true;
       }else{
-        this.SweetalertService.notificacion("info","El equipo no esta aptopara entrega.");
+        this.SweetalertService.notificacion("info","El equipo no esta apto para entrega.");
       }
     }else{
       if(this.ESTADOS_RECOGER.indexOf(equipo.reciboEstadoReparto) != -1 && this.RECOGER){
         this.BOTON_RECOGER=true;
       }else{
-        this.SweetalertService.notificacion("info","El equipo no esta aptopara recoger.");
+        this.SweetalertService.notificacion("info","El equipo no esta apto para recoger.");
       }
     }
     
